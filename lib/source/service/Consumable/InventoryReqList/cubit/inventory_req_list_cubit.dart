@@ -8,22 +8,22 @@ import 'package:meta/meta.dart';
 
 part 'inventory_req_list_state.dart';
 
-class InventoryReqListCubit extends Cubit<InventoryReqListState> {
+class InventoryReqListCubit extends Cubit<InventoryReqConsumableListState> {
   final RepositoryConsumable? repository;
-  InventoryReqListCubit({this.repository}) : super(InventoryReqListInitial());
+  InventoryReqListCubit({this.repository}) : super(InventoryReqConsumableListInitial());
 
   void inventoryReqList(context) {
-    emit(InventoryReqListLoading());
+    emit(InventoryReqConsumableListLoading());
     repository!.getInventoryReqList(context).then((value) {
       var json = value.body;
       var statusCode = value.statusCode;
       print("Inventory Req List: $json");
       if (statusCode == 401) {
       } else if (statusCode == 200) {
-        emit(InventoryReqListLoaded(statusCode: statusCode, model: modelConsumableInventoryListFromJson(json)));
+        emit(InventoryReqConsumableListLoaded(statusCode: statusCode, model: modelConsumableInventoryListFromJson(json)));
       } else {
         MyDialog.dialogAlert(context, "Maaf terjadi kesalahan");
-        emit(InventoryReqListLoaded(statusCode: statusCode, model: modelConsumableInventoryListFromJson(jsonEncode([]))));
+        emit(InventoryReqConsumableListLoaded(statusCode: statusCode, model: modelConsumableInventoryListFromJson(jsonEncode([]))));
       }
     });
   }

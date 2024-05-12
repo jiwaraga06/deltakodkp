@@ -8,23 +8,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 part 'location_state.dart';
 
-class LocationCubit extends Cubit<LocationState> {
+class LocationConsumableCubit extends Cubit<LocationConsumableState> {
   final RepositoryConsumable? repository;
-  LocationCubit({this.repository}) : super(LocationInitial());
+  LocationConsumableCubit({this.repository}) : super(LocationConsumableInitial());
 
   void getLocation(id, branch, context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var username = pref.getString("username");
-    emit(LocationLoading());
+    emit(LocationConsumableLoading());
     repository!.getLocationList(id, branch, username, context).then((value) {
       var json = value.body;
       var statusCode = value.statusCode;
       print("LOCATION: $json");
       if (statusCode == 401) {
       } else if (statusCode == 200) {
-        emit(LocationLoaded(statusCode: statusCode, model: modelConsumableLocationListFromJson(json)));
+        emit(LocationConsumableLoaded(statusCode: statusCode, model: modelConsumableLocationListFromJson(json)));
       } else {
-        emit(LocationLoaded(statusCode: statusCode, model: modelConsumableLocationListFromJson(jsonEncode([]))));
+        emit(LocationConsumableLoaded(statusCode: statusCode, model: modelConsumableLocationListFromJson(jsonEncode([]))));
       }
     });
   }

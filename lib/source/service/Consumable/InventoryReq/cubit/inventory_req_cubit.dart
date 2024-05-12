@@ -11,12 +11,12 @@ import 'package:meta/meta.dart';
 
 part 'inventory_req_state.dart';
 
-class InventoryReqCubit extends Cubit<InventoryReqState> {
+class InventoryReqCubit extends Cubit<InventoryReqConsumableState> {
   final RepositoryConsumable? repository;
-  InventoryReqCubit({this.repository}) : super(InventoryReqInitial());
+  InventoryReqCubit({this.repository}) : super(InventoryReqConsumableInitial());
 
   void inventoryReq(context) async {
-    emit(InventoryReqloading());
+    emit(InventoryReqConsumableloading());
     String? barcodeScanRes;
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
@@ -29,10 +29,10 @@ class InventoryReqCubit extends Cubit<InventoryReqState> {
           print("Inventory Req: $json");
           if (statusCode == 401) {
           } else if (statusCode == 200) {
-            emit(InventoryReqloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(json)));
+            emit(InventoryReqConsumableloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(json)));
           } else {
             MyDialog.dialogAlert(context, "Maaf terjadi kesalahan");
-            emit(InventoryReqloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(jsonEncode([]))));
+            emit(InventoryReqConsumableloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(jsonEncode([]))));
           }
         });
       } else {
@@ -44,17 +44,17 @@ class InventoryReqCubit extends Cubit<InventoryReqState> {
   }
 
   void inventoryReqValue(code, context) {
-    emit(InventoryReqloading());
+    emit(InventoryReqConsumableloading());
     repository!.getInventoryReq(code, context).then((value) {
       var json = value.body;
       var statusCode = value.statusCode;
       print("Inventory Req: $json");
       if (statusCode == 401) {
       } else if (statusCode == 200) {
-        emit(InventoryReqloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(json)));
+        emit(InventoryReqConsumableloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(json)));
       } else {
         MyDialog.dialogAlert(context, "Maaf terjadi kesalahan");
-        emit(InventoryReqloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(jsonEncode([]))));
+        emit(InventoryReqConsumableloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(jsonEncode([]))));
       }
     });
   }

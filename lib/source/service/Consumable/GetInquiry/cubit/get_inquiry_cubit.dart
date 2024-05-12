@@ -8,22 +8,22 @@ import 'package:meta/meta.dart';
 
 part 'get_inquiry_state.dart';
 
-class GetInquiryCubit extends Cubit<GetInquiryState> {
+class GetInquiryConsumableCubit extends Cubit<GetInquiryConsumableState> {
   final RepositoryConsumable? repository;
-  GetInquiryCubit({this.repository}) : super(GetInquiryInitial());
+  GetInquiryConsumableCubit({this.repository}) : super(GetInquiryConsumableInitial());
 
   void getInquiry(startdate, enddate, context) async {
-    emit(GetInquiryLoading());
+    emit(GetInquiryConsumableLoading());
     repository!.getInquiry(context, startdate, enddate).then((value) {
       var json = value.body;
       var statusCode = value.statusCode;
       print("Get INQUIRY: $json");
       if (statusCode == 401) {
       } else if (statusCode == 200) {
-        emit(GetInquiryLoaded(statusCode: statusCode, model: modelConsumableInquiryFromJson(json)));
+        emit(GetInquiryConsumableLoaded(statusCode: statusCode, model: modelConsumableInquiryFromJson(json)));
       } else {
         MyDialog.dialogAlert(context, "Maaf terjadi kesalahan");
-        emit(GetInquiryLoaded(statusCode: statusCode, model: modelConsumableInquiryFromJson(jsonEncode([]))));
+        emit(GetInquiryConsumableLoaded(statusCode: statusCode, model: modelConsumableInquiryFromJson(jsonEncode([]))));
       }
     });
   }

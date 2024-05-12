@@ -3,6 +3,8 @@ import 'package:deltakodkp/source/env/pickdate.dart';
 import 'package:deltakodkp/source/model/Wo/modelInputWo.dart';
 import 'package:deltakodkp/source/router/string.dart';
 import 'package:deltakodkp/source/service/Auth/cubit/auth_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/GetInquiry/cubit/get_inquiry_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/GetInquiryDetail/cubit/get_inquiry_detail_cubit.dart';
 import 'package:deltakodkp/source/service/Wo/GetInquiry/cubit/get_inquiry_cubit.dart';
 import 'package:deltakodkp/source/service/Wo/GetInquiryDetail/cubit/get_inquiry_detail_cubit.dart';
 import 'package:deltakodkp/source/service/Wo/MateriaReqList/cubit/material_request_list_cubit.dart';
@@ -26,8 +28,13 @@ part 'Auth/splash.dart';
 part 'Auth/login.dart';
 part 'Dashboard/dashboard.dart';
 // INPUTAN
+// wo
 part 'Dashboard/wo/wo.dart';
 part 'Dashboard/wo/detailWo.dart';
-part 'Dashboard/consumable/inputConsumable.dart';
-part 'Dashboard/inventory/inputInventory.dart';
 part 'Dashboard/wo/inputWo.dart';
+// consumable
+part 'Dashboard/consumable/inputConsumable.dart';
+part 'Dashboard/consumable/consumable.dart';
+part 'Dashboard/consumable/detailConsumable.dart';
+// /inventory
+part 'Dashboard/inventory/inputInventory.dart';

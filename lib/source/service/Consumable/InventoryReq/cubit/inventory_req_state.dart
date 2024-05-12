@@ -1,15 +1,15 @@
 part of 'inventory_req_cubit.dart';
 
 @immutable
-sealed class InventoryReqState {}
+sealed class InventoryReqConsumableState {}
 
-final class InventoryReqInitial extends InventoryReqState {}
+final class InventoryReqConsumableInitial extends InventoryReqConsumableState {}
 
-final class InventoryReqloading extends InventoryReqState {}
+final class InventoryReqConsumableloading extends InventoryReqConsumableState {}
 
-final class InventoryReqloaded extends InventoryReqState {
+final class InventoryReqConsumableloaded extends InventoryReqConsumableState {
   final int? statusCode;
   final ModelConsumableInventoryReq? model;
 
-  InventoryReqloaded({required this.statusCode, required this.model});
+  InventoryReqConsumableloaded({required this.statusCode, required this.model});
 }

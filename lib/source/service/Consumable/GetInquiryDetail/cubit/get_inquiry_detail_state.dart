@@ -1,15 +1,15 @@
 part of 'get_inquiry_detail_cubit.dart';
 
 @immutable
-sealed class GetInquiryDetailState {}
+sealed class GetInquiryDetailConsumableState {}
 
-final class GetInquiryDetailInitial extends GetInquiryDetailState {}
+final class GetInquiryDetailConsumableInitial extends GetInquiryDetailConsumableState {}
 
-final class GetInquiryDetailLoading extends GetInquiryDetailState {}
+final class GetInquiryDetailConsumableLoading extends GetInquiryDetailConsumableState {}
 
-final class GetInquiryDetailLoaded extends GetInquiryDetailState {
+final class GetInquiryDetailConsumableLoaded extends GetInquiryDetailConsumableState {
   final int? statusCode;
   final List<ModelConsumableInquiryDetail>? model;
 
-  GetInquiryDetailLoaded({required this.statusCode, required this.model});
+  GetInquiryDetailConsumableLoaded({required this.statusCode, required this.model});
 }

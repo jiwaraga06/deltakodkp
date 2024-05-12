@@ -55,17 +55,7 @@ class RouterNavigation {
           transitionsBuilder: bottomToTop,
         );
       // input
-      case inputConsumableScreen:
-        return PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const InputConsumableScreen(),
-          transitionsBuilder: rightToLeft,
-        );
-
-      case inputInventoryScreen:
-        return PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const InputInvetoryScreen(),
-          transitionsBuilder: rightToLeft,
-        );
+      //wo
       case woScreen:
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => const WoScreen(),
@@ -75,11 +65,34 @@ class RouterNavigation {
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => const DetailWoScreen(),
           transitionsBuilder: rightToLeft,
-          settings: settings
+          settings: settings,
         );
       case inputWoScreen:
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => const InputWoScreen(),
+          transitionsBuilder: rightToLeft,
+        );
+      // consumable
+      case consumableScreen:
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const ConsumableScreen(),
+          transitionsBuilder: rightToLeft,
+        );
+      case detailConsumableScreen:
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const DetailConsumableScreen(),
+          transitionsBuilder: rightToLeft,
+          settings: settings,
+        );
+      case inputConsumableScreen:
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const InputConsumableScreen(),
+          transitionsBuilder: rightToLeft,
+        );
+// inventory
+      case inputInventoryScreen:
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const InputInvetoryScreen(),
           transitionsBuilder: rightToLeft,
         );
       default:

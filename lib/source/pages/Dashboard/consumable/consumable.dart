@@ -1,17 +1,17 @@
 part of '../../index.dart';
 
-class WoScreen extends StatefulWidget {
-  const WoScreen({super.key});
+class ConsumableScreen extends StatefulWidget {
+  const ConsumableScreen({super.key});
 
   @override
-  State<WoScreen> createState() => _WoScreenState();
+  State<ConsumableScreen> createState() => _ConsumableScreenState();
 }
 
-class _WoScreenState extends State<WoScreen> {
+class _ConsumableScreenState extends State<ConsumableScreen> {
   TextEditingController controllerStartDate = TextEditingController(text: dateNow.toString());
   TextEditingController controllerEndDate = TextEditingController(text: dateNow.toString());
   void getData() {
-    BlocProvider.of<GetInquiryCubit>(context).getInquiry(controllerStartDate.text, controllerEndDate.text, context);
+    BlocProvider.of<GetInquiryConsumableCubit>(context).getInquiry(controllerStartDate.text, controllerEndDate.text, context);
   }
 
   void pickStartDate() {
@@ -45,19 +45,9 @@ class _WoScreenState extends State<WoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("WO Issue"), actions: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CustomButton(
-            onTap: () {
-              Navigator.pushNamed(context, inputWoScreen);
-            },
-            text: "Input WO",
-            textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-            bkackgroundColor: Colors.teal,
-          ),
-        )
-      ]),
+      appBar: AppBar(
+        title: Text("Consumable"),
+      ),
       body: Column(
         children: [
           const SizedBox(height: 10),
@@ -89,16 +79,15 @@ class _WoScreenState extends State<WoScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          BlocBuilder<GetInquiryCubit, GetInquiryState>(
+          BlocBuilder<GetInquiryConsumableCubit, GetInquiryConsumableState>(
             builder: (context, state) {
-              if (state is GetInquiryLoading) {
+              if (state is GetInquiryConsumableLoading) {
                 return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
               }
-              if (state is GetInquiryLoaded == false) {
+              if (state is GetInquiryConsumableLoaded == false) {
                 return Container();
               }
-              var data = (state as GetInquiryLoaded).model;
-              var statusCode = (state as GetInquiryLoaded).statusCode;
+              var data = (state as GetInquiryConsumableLoaded).model;
               if (data!.isEmpty) {
                 return const SizedBox(
                   height: 100,
@@ -107,7 +96,7 @@ class _WoScreenState extends State<WoScreen> {
               }
               return Expanded(
                 child: RefreshIndicator(
-                  onRefresh: () async {
+                  onRefresh: ()async {
                     await Future.delayed(const Duration(seconds: 1));
                     getData();
                   },
@@ -117,7 +106,7 @@ class _WoScreenState extends State<WoScreen> {
                       var a = data[index];
                       return GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, detailWoScreen, arguments: {'issue_code': a.issueCode});
+                          Navigator.pushNamed(context, detailConsumableScreen, arguments: {'issue_code': a.issueCode});
                         },
                         child: Container(
                           margin: const EdgeInsets.all(12),
@@ -138,21 +127,15 @@ class _WoScreenState extends State<WoScreen> {
                               ]),
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                               TableRow(children: [
-                                const Text("Issue Date", style: TextStyle(fontSize: 17)),
-                                const Text(":", style: TextStyle(fontSize: 17)),
-                                Text(formatDate.format(a.issueDate!), style: const TextStyle(fontSize: 17)),
+                                const Text("Req Code", style: TextStyle(fontSize: 19)),
+                                const Text(":", style: TextStyle(fontSize: 19)),
+                                Text(a.requestCode!, style: const TextStyle(fontSize: 19)),
                               ]),
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                               TableRow(children: [
-                                const Text("WO Code", style: TextStyle(fontSize: 17)),
-                                const Text(":", style: TextStyle(fontSize: 17)),
-                                Text(a.woCode!, style: const TextStyle(fontSize: 17)),
-                              ]),
-                              const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                              TableRow(children: [
-                                const Text("Request Code", style: TextStyle(fontSize: 17)),
-                                const Text(":", style: TextStyle(fontSize: 17)),
-                                Text(a.requestCode!, style: const TextStyle(fontSize: 17)),
+                                const Text("Issue Date", style: TextStyle(fontSize: 19)),
+                                const Text(":", style: TextStyle(fontSize: 19)),
+                                Text(a.issueDate.toString(), style: const TextStyle(fontSize: 19)),
                               ]),
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                             ],

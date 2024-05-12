@@ -33,7 +33,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           CustomTile(
             onTap: () {
-              Navigator.pushNamed(context, inputConsumableScreen);
+              Navigator.pushNamed(context, consumableScreen);
             },
             color: colorBlueNavy,
             leading: const Icon(Icons.menu, color: Colors.white),

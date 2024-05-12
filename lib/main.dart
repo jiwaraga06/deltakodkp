@@ -3,6 +3,14 @@ import 'package:deltakodkp/source/repository/repositoryConsumable.dart';
 import 'package:deltakodkp/source/repository/repositoryWo.dart';
 import 'package:deltakodkp/source/router/router.dart';
 import 'package:deltakodkp/source/service/Auth/cubit/auth_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/GetInquiry/cubit/get_inquiry_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/GetInquiryDetail/cubit/get_inquiry_detail_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/InsertConsumable/cubit/insert_consumable_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/InventoryReq/cubit/inventory_req_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/InventoryReqList/cubit/inventory_req_list_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/Machine/cubit/machine_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/Production/cubit/production_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/ScanQr/cubit/scan_qr_consumable_cubit.dart';
 import 'package:deltakodkp/source/service/Wo/GetInquiry/cubit/get_inquiry_cubit.dart';
 import 'package:deltakodkp/source/service/Wo/GetInquiryDetail/cubit/get_inquiry_detail_cubit.dart';
 import 'package:deltakodkp/source/service/Wo/MateriaReqList/cubit/material_request_list_cubit.dart';
@@ -41,6 +49,15 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => LocationCubit(repository: RepositoryWo())),
           BlocProvider(create: (context) => QrCubit(repository: RepositoryWo())),
           BlocProvider(create: (context) => InsertWoCubit(repository: RepositoryWo())),
+          // consumable
+          BlocProvider(create: (context) => GetInquiryConsumableCubit(repository: RepositoryConsumable())),
+          BlocProvider(create: (context) => GetInquiryDetailConsumableCubit(repository: RepositoryConsumable())),
+          BlocProvider(create: (context) => InventoryReqCubit(repository: RepositoryConsumable())),
+          BlocProvider(create: (context) => InventoryReqListCubit(repository: RepositoryConsumable())),
+          BlocProvider(create: (context) => MachineCubit(repository: RepositoryConsumable())),
+          BlocProvider(create: (context) => ProductionCubit(repository: RepositoryConsumable())),
+          BlocProvider(create: (context) => ScanQrConsumableCubit(repository: RepositoryConsumable())),
+          BlocProvider(create: (context) => InsertConsumableCubit(repository: RepositoryConsumable())),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

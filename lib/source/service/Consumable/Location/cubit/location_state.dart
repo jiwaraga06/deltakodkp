@@ -1,15 +1,15 @@
 part of 'location_cubit.dart';
 
 @immutable
-sealed class LocationState {}
+sealed class LocationConsumableState {}
 
-final class LocationInitial extends LocationState {}
+final class LocationConsumableInitial extends LocationConsumableState {}
 
-final class LocationLoading extends LocationState {}
+final class LocationConsumableLoading extends LocationConsumableState {}
 
-final class LocationLoaded extends LocationState {
+final class LocationConsumableLoaded extends LocationConsumableState {
   final int? statusCode;
   final List<ModelConsumableLocationList>? model;
 
-  LocationLoaded({required this.statusCode, required this.model});
+  LocationConsumableLoaded({required this.statusCode, required this.model});
 }
