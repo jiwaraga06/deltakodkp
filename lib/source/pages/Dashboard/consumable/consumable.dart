@@ -45,9 +45,19 @@ class _ConsumableScreenState extends State<ConsumableScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Consumable"),
-      ),
+      appBar: AppBar(title: Text("Consumable"), actions: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CustomButton(
+            onTap: () {
+              Navigator.pushNamed(context, inputConsumableScreen);
+            },
+            text: "Input Consumable",
+            textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            bkackgroundColor: Colors.teal,
+          ),
+        )
+      ]),
       body: Column(
         children: [
           const SizedBox(height: 10),
@@ -96,7 +106,7 @@ class _ConsumableScreenState extends State<ConsumableScreen> {
               }
               return Expanded(
                 child: RefreshIndicator(
-                  onRefresh: ()async {
+                  onRefresh: () async {
                     await Future.delayed(const Duration(seconds: 1));
                     getData();
                   },

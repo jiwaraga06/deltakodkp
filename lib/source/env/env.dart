@@ -1,3 +1,4 @@
+import 'package:deltakodkp/source/model/Consumable/modelinputConsumable.dart';
 import 'package:deltakodkp/source/model/Wo/modelInputWo.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,3 +20,7 @@ var dateNow = DateTime.now().toString().split(' ')[0];
 // MODEL INPUT WO
 List<ModelInputWo> inputwo = [];
 List<ModelInputWo> selectedInputwo = [];
+// MODEL INPUT Consumable
+List<ModelinputConsumable> inputconsumable = [];
+List<ModelinputConsumable> selectedInputconsumable = [];
+var loclocationCid, loclocationCDesc;

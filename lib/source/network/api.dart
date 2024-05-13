@@ -66,4 +66,7 @@ class Api {
   static getConsumableScanQR(code, lot, loc) {
     return "$host/api/ConsumableIssue/ScanQR?request_code=$code&lot_serial_no=$lot&loc_id=$loc";
   }
+  static insertConsumable() {
+    return "$host/api/ConsumableIssue/Insert";
+  }
 }

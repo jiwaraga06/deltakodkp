@@ -1,3 +1,4 @@
+
 import 'package:deltakodkp/source/env/internetCheck.dart';
 import 'package:deltakodkp/source/network/api.dart';
 import 'package:deltakodkp/source/network/network.dart';
@@ -70,6 +71,14 @@ class RepositoryConsumable {
   Future getScanQR(code, lot, loc, context) async {
     if (await internetChecker()) {
       var json = await network(url: Api.getConsumableScanQR(code, lot, loc), method: "GET", body: null, context: context);
+      return json;
+    } else {
+      MyDialog.dialogAlert(context, "Maaf, Ada Kesalahan Jaringan !");
+    }
+  }
+  Future insertConsumable(body, context) async {
+    if (await internetChecker()) {
+      var json = await network(url: Api.insertConsumable(), method: "POST", body: body, context: context);
       return json;
     } else {
       MyDialog.dialogAlert(context, "Maaf, Ada Kesalahan Jaringan !");

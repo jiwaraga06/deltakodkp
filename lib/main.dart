@@ -8,6 +8,7 @@ import 'package:deltakodkp/source/service/Consumable/GetInquiryDetail/cubit/get_
 import 'package:deltakodkp/source/service/Consumable/InsertConsumable/cubit/insert_consumable_cubit.dart';
 import 'package:deltakodkp/source/service/Consumable/InventoryReq/cubit/inventory_req_cubit.dart';
 import 'package:deltakodkp/source/service/Consumable/InventoryReqList/cubit/inventory_req_list_cubit.dart';
+import 'package:deltakodkp/source/service/Consumable/Location/cubit/location_cubit.dart';
 import 'package:deltakodkp/source/service/Consumable/Machine/cubit/machine_cubit.dart';
 import 'package:deltakodkp/source/service/Consumable/Production/cubit/production_cubit.dart';
 import 'package:deltakodkp/source/service/Consumable/ScanQr/cubit/scan_qr_consumable_cubit.dart';
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => GetInquiryDetailConsumableCubit(repository: RepositoryConsumable())),
           BlocProvider(create: (context) => InventoryReqCubit(repository: RepositoryConsumable())),
           BlocProvider(create: (context) => InventoryReqListCubit(repository: RepositoryConsumable())),
+          BlocProvider(create: (context) => LocationConsumableCubit(repository: RepositoryConsumable())),
           BlocProvider(create: (context) => MachineCubit(repository: RepositoryConsumable())),
           BlocProvider(create: (context) => ProductionCubit(repository: RepositoryConsumable())),
           BlocProvider(create: (context) => ScanQrConsumableCubit(repository: RepositoryConsumable())),

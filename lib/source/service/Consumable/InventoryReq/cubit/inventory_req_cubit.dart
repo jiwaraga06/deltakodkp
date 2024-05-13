@@ -21,9 +21,9 @@ class InventoryReqCubit extends Cubit<InventoryReqConsumableState> {
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
       print('Result Scan:  $barcodeScanRes');
-      if (barcodeScanRes != '-1') {
+      // if (barcodeScanRes != '-1') {
         // 'PTKP/WM/19/08-00001'
-        repository!.getInventoryReq(barcodeScanRes, context).then((value) {
+        repository!.getInventoryReq("PTKP/IR/24/05-00588", context).then((value) {
           var json = value.body;
           var statusCode = value.statusCode;
           print("Inventory Req: $json");
@@ -35,9 +35,9 @@ class InventoryReqCubit extends Cubit<InventoryReqConsumableState> {
             emit(InventoryReqConsumableloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(jsonEncode([]))));
           }
         });
-      } else {
-        EasyLoading.dismiss();
-      }
+      // } else {
+      //   EasyLoading.dismiss();
+      // }
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }

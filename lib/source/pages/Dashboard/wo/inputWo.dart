@@ -176,6 +176,8 @@ class _InputWoScreenState extends State<InputWoScreen> {
                     }, () {
                       Navigator.of(context).pop();
                     });
+                  } else {
+                    MyDialog.dialogAlert(context, data['message']);
                   }
                 }
               },

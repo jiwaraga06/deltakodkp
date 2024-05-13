@@ -9,7 +9,7 @@ final class ProductionLoading extends ProductionState {}
 
 final class ProductionLoaded extends ProductionState {
   final int? statusCode;
-  final List<ModelConsumableLocationList>? model;
+  final List<ModelConsumableProductionUnitList>? model;
 
   ProductionLoaded({required this.statusCode, required this.model});
 }

@@ -11,11 +11,12 @@ part 'inventory_req_list_state.dart';
 class InventoryReqListCubit extends Cubit<InventoryReqConsumableListState> {
   final RepositoryConsumable? repository;
   InventoryReqListCubit({this.repository}) : super(InventoryReqConsumableListInitial());
-
+  var list = [];
   void inventoryReqList(context) {
     emit(InventoryReqConsumableListLoading());
     repository!.getInventoryReqList(context).then((value) {
       var json = value.body;
+      list = jsonDecode(value.body);
       var statusCode = value.statusCode;
       print("Inventory Req List: $json");
       if (statusCode == 401) {
@@ -26,5 +27,23 @@ class InventoryReqListCubit extends Cubit<InventoryReqConsumableListState> {
         emit(InventoryReqConsumableListLoaded(statusCode: statusCode, model: modelConsumableInventoryListFromJson(jsonEncode([]))));
       }
     });
+  }
+
+  void searchData(String value) {
+    emit(InventoryReqConsumableListLoading());
+
+    var result = value;
+    print('Result:  $result');
+    print('list');
+    // print(list);
+    var hasil = list.where((e) => e['woi_code'].toLowerCase().contains(result.toLowerCase())).toList();
+    print('hasil: $hasil');
+    if (result == '') {
+      print('Kosong');
+    emit(InventoryReqConsumableListLoaded(statusCode: 200, model: modelConsumableInventoryListFromJson(jsonEncode(list))));
+    } else {
+      print('ada');
+    emit(InventoryReqConsumableListLoaded(statusCode: 200, model: modelConsumableInventoryListFromJson(jsonEncode(hasil))));
+    }
   }
 }

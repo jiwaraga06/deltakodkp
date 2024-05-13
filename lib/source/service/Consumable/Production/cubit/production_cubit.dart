@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:deltakodkp/source/model/Consumable/modelConsumableLocationList.dart';
+import 'package:deltakodkp/source/model/Consumable/modelConsumableProductionUnitList.dart';
 import 'package:deltakodkp/source/repository/repositoryConsumable.dart';
 import 'package:meta/meta.dart';
 
@@ -15,7 +16,7 @@ class ProductionCubit extends Cubit<ProductionState> {
       var json = value.body;
       var statusCode = value.statusCode;
       print("PRODUCTION : $json");
-      emit(ProductionLoaded(statusCode: statusCode, model: modelConsumableLocationListFromJson(json)));
+      emit(ProductionLoaded(statusCode: statusCode, model: modelConsumableProductionUnitListFromJson(json)));
     });
   }
 }
