@@ -66,7 +66,41 @@ class Api {
   static getConsumableScanQR(code, lot, loc) {
     return "$host/api/ConsumableIssue/ScanQR?request_code=$code&lot_serial_no=$lot&loc_id=$loc";
   }
+
   static insertConsumable() {
     return "$host/api/ConsumableIssue/Insert";
+  }
+
+  // inventory
+  static getInquiryInventory(startdate, enddate) {
+    return "$host/api/InventoryIssue/GetInquiry?start_date=$startdate&end_date=$enddate";
+  }
+
+  static getInquiryInventoryDetail(issueCode) {
+    return "$host/api/InventoryIssue/GetInquiryDetail?issue_code=$issueCode";
+  }
+
+  static getInventoryReq(reqCode) {
+    return "$host/api/InventoryIssue/GetInventoryRequest?inventory_request_code=$reqCode";
+  }
+
+  static getInventoryReqList() {
+    return "$host/api/InventoryIssue/GetInventoryRequestList";
+  }
+
+  static getInventoryLocation(enid, branchid, username) {
+    return "$host/api/InventoryIssue/GetLocationList?en_id=$enid&branch_id=$branchid&user_name=$username";
+  }
+
+  static scanQrInventory(reqCode, lotserial, locid) {
+    return "$host/api/InventoryIssue/ScanQR?request_code=$reqCode&lot_serial_no=$lotserial&loc_id=$locid";
+  }
+
+  static scanQrNonIr(lotserial, locid) {
+    return "$host/api/InventoryIssue/ScanQR?lot_serial_no=$lotserial&loc_id=$locid";
+  }
+
+  static insertInventory() {
+    return "$host/api/InventoryIssue/Insert";
   }
 }

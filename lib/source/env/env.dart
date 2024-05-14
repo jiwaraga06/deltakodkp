@@ -1,4 +1,5 @@
 import 'package:deltakodkp/source/model/Consumable/modelinputConsumable.dart';
+import 'package:deltakodkp/source/model/Inventory/modelinputInventory.dart';
 import 'package:deltakodkp/source/model/Wo/modelInputWo.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -24,3 +25,5 @@ List<ModelInputWo> selectedInputwo = [];
 List<ModelinputConsumable> inputconsumable = [];
 List<ModelinputConsumable> selectedInputconsumable = [];
 var loclocationCid, loclocationCDesc;
+// Model Input Inventory
+List<Modelinputinventory> inputInventory = [];
