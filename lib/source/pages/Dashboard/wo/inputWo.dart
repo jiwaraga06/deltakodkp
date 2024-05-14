@@ -11,7 +11,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
   TextEditingController controllerWoMrCode = TextEditingController();
   TextEditingController controllerWoCode = TextEditingController();
   TextEditingController controllerDate = TextEditingController(text: dateNow);
-  TextEditingController controllerCari = TextEditingController(text: dateNow);
+  TextEditingController controllerCari = TextEditingController();
   var woiOid, woiCode, enId, branchId, ccId, woId, woOid, locId, locDesc;
   // result scan qr
   var wodOid, ptId, ptDesc1, lotSerial, qtyIssue;
@@ -51,8 +51,8 @@ class _InputWoScreenState extends State<InputWoScreen> {
   }
 
   void scanQr() {
-    if (controllerWoCode.value.text.isNotEmpty && locId != null) {
-      BlocProvider.of<QrCubit>(context).qr(controllerWoMrCode.text, locId, context);
+    if (controllerWoCode.value.text.isNotEmpty && loclocationCid != null) {
+      BlocProvider.of<QrCubit>(context).qr(controllerWoMrCode.text, loclocationCid, context);
     }
   }
 

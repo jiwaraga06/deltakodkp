@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:deltakodkp/source/model/Wo/modelMaterialReqList.dart';
 import 'package:deltakodkp/source/repository/repositoryWo.dart';
+import 'package:deltakodkp/source/widget/customDialog.dart';
 import 'package:meta/meta.dart';
 
 part 'material_request_list_state.dart';
@@ -17,8 +18,14 @@ class MaterialRequestListCubit extends Cubit<MaterialRequestListState> {
       var json = value.body;
       list = jsonDecode(value.body);
       var statusCode = value.statusCode;
-      print("MaterialReqList : $json");
-      emit(MaterialRequestListLoaded(statusCode: statusCode, model: modelMaterialListFromJson(json)));
+      if (statusCode == 200) {
+        print("MaterialReqList : $json");
+        emit(MaterialRequestListLoaded(statusCode: statusCode, model: modelMaterialListFromJson(json)));
+      } else {
+        var json = jsonDecode(value.body);
+        MyDialog.dialogAlert(context, json['message']);
+        emit(MaterialRequestListLoaded(statusCode: statusCode, model: modelMaterialListFromJson(jsonEncode([]))));
+      }
     });
   }
 

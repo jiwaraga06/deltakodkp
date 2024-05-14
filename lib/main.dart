@@ -1,5 +1,6 @@
 import 'package:deltakodkp/source/repository/repositoryAuth.dart';
 import 'package:deltakodkp/source/repository/repositoryConsumable.dart';
+import 'package:deltakodkp/source/repository/repositoryInventory.dart';
 import 'package:deltakodkp/source/repository/repositoryWo.dart';
 import 'package:deltakodkp/source/router/router.dart';
 import 'package:deltakodkp/source/service/Auth/cubit/auth_cubit.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (context) => RepositoryAuth()),
         RepositoryProvider(create: (context) => RepositoryWo()),
         RepositoryProvider(create: (context) => RepositoryConsumable()),
+        RepositoryProvider(create: (context) => RepositoryInventory()),
       ],
       child: MultiBlocProvider(
         providers: [

@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:deltakodkp/source/model/Wo/modelLocationlist.dart';
 import 'package:deltakodkp/source/repository/repositoryWo.dart';
+import 'package:deltakodkp/source/widget/customDialog.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,10 +25,18 @@ class LocationCubit extends Cubit<LocationState> {
     print("username $username");
     emit(LocationLoading());
     repository!.getLocationList(enId, branchId, username, context).then((value) {
-      var json = value.body;
       var statusCode = value.statusCode;
-      print("Location: $json");
-      emit(LocationLoaded(statusCode: statusCode, model: modelLocationListFromJson(json)));
+      if (statusCode == 200) {
+        var json = value.body;
+        print("Location: $json");
+
+        emit(LocationLoaded(statusCode: statusCode, model: modelLocationListFromJson(json)));
+      } else {
+        var json = jsonDecode(value.body);
+        print("Location: $json");
+        MyDialog.dialogAlert(context, json['message']);
+        emit(LocationLoaded(statusCode: statusCode, model: modelLocationListFromJson(jsonEncode([]))));
+      }
     });
   }
 }

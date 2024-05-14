@@ -29,21 +29,19 @@ class InventoryReqListCubit extends Cubit<InventoryReqConsumableListState> {
     });
   }
 
-  void searchData(String value) {
+  void searchData(value) {
     emit(InventoryReqConsumableListLoading());
 
-    var result = value;
-    print('Result:  $result');
-    print('list');
+
     // print(list);
-    var hasil = list.where((e) => e['woi_code'].toLowerCase().contains(result.toLowerCase())).toList();
+    var hasil = list.where((e) => e['request_code'].toLowerCase().contains(value.toLowerCase())).toList();
     print('hasil: $hasil');
-    if (result == '') {
+    if (value == '') {
       print('Kosong');
-    emit(InventoryReqConsumableListLoaded(statusCode: 200, model: modelConsumableInventoryListFromJson(jsonEncode(list))));
+      emit(InventoryReqConsumableListLoaded(statusCode: 200, model: modelConsumableInventoryListFromJson(jsonEncode(list))));
     } else {
       print('ada');
-    emit(InventoryReqConsumableListLoaded(statusCode: 200, model: modelConsumableInventoryListFromJson(jsonEncode(hasil))));
+      emit(InventoryReqConsumableListLoaded(statusCode: 200, model: modelConsumableInventoryListFromJson(jsonEncode(hasil))));
     }
   }
 }

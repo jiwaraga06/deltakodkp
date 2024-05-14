@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:deltakodkp/source/model/Wo/modelQr.dart';
 import 'package:deltakodkp/source/repository/repositoryWo.dart';
+import 'package:deltakodkp/source/widget/customDialog.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -20,10 +23,16 @@ class QrCubit extends Cubit<QrState> {
       print('Result Scan:  $barcodeScanRes');
       if (barcodeScanRes != '-1') {
         repository!.scanQrWo(mr, barcodeScanRes, locId, context).then((value) {
-          var json = value.body;
           var statusCode = value.statusCode;
-          print("Scan: $json");
-          emit(QrLoaded(statusCode: statusCode, model: modelScanFromJson(json)));
+          if (statusCode == 200) {
+            var json = value.body;
+            print("Scan: $json");
+            emit(QrLoaded(statusCode: statusCode, model: modelScanFromJson(json)));
+          } else {
+            var json = jsonDecode(value.body);
+            MyDialog.dialogAlert(context, json['message']);
+            emit(QrLoaded(statusCode: statusCode, model: modelScanFromJson(jsonEncode([]))));
+          }
         });
       } else {
         EasyLoading.dismiss();

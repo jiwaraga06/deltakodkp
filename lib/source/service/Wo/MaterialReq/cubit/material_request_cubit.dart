@@ -24,14 +24,15 @@ class MaterialRequestCubit extends Cubit<MaterialRequestState> {
       if (barcodeScanRes != '-1') {
         // 'PTKP/WM/19/08-00001'
         repository!.getMaterialRequest(barcodeScanRes, context).then((value) {
-          var json = value.body;
           var statusCode = value.statusCode;
           print("Material Req: $json");
           if (statusCode == 401) {
           } else if (statusCode == 200) {
+            var json = value.body;
             emit(MaterialRequestLoaded(statusCode: statusCode, model: modelMaterialReqFromJson(json)));
           } else {
-            MyDialog.dialogAlert(context, "Maaf terjadi kesalahan");
+            var json = jsonDecode(value.body);
+            MyDialog.dialogAlert(context, json['message']);
             emit(MaterialRequestLoaded(statusCode: statusCode, model: modelMaterialReqFromJson(jsonEncode([]))));
           }
         });

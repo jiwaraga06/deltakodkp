@@ -181,7 +181,7 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                 if (statusCode == 200) {
                   setState(() {
                     requestDetOid = data.requestDetOid;
-                    ptId = data.plId;
+                    ptId = data.ptId;
                     ptDesc = data.ptDesc1;
                     plId = data.plId;
                     umid = data.umId;
@@ -216,7 +216,6 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                 }
               }
             },
-            child: Container(),
           )
         ],
         child: SingleChildScrollView(

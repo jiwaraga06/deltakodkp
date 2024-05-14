@@ -17,13 +17,13 @@ class InsertConsumableCubit extends Cubit<InsertConsumableState> {
     var username = pref.getString("username");
     var body = {
       "issue_date": "$date",
-      "add_by": "$username",
       "en_id": "$enid",
       "branch_id": "$branchId",
       "request_oid": "$reqOid",
       "request_code": "$reqCode",
       "prod_unit_id": "$prodId",
       "prod_machine_id": "$machineId",
+      "add_by": "$username",
       "consumableIssueDetail": inputconsumable
     };
     print(body);
