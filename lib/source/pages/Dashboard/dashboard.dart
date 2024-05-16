@@ -15,41 +15,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Dashboard")),
+      appBar: AppBar(
+        backgroundColor: Color(0XFFFEB941),
+      ),
       body: ListView(
         children: [
-          const Center(
-            child: Text("DELTAKOD-KP", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
+          Ink(
+            color: Color(0XFFFEB941),
+            child: SizedBox(
+              height: 200,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: Center(
+                  child: Text("DELTAKOD-KP", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 30),
-          CustomTile(
-            onTap: () {
-              Navigator.pushNamed(context, woScreen);
-            },
-            color: colorBlueLight,
-            leading: const Icon(Icons.menu, color: Colors.white),
-            title: const Text("WO ISSUE", style: TextStyle(color: Colors.white)),
-            trailing: const Icon(Icons.arrow_forward, color: Colors.white),
+          Container(
+            child: GridView.count(
+              shrinkWrap: true,
+              crossAxisSpacing: 1,
+              mainAxisSpacing: 2,
+              crossAxisCount: 3,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, woScreen);
+                  },
+                  child: Column(
+                    children: [
+                      Ink(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(color: colorBlueLight, borderRadius: BorderRadius.circular(8)),
+                          child: Icon(Icons.work, color: Colors.white)),
+                      SizedBox(height: 10),
+                      Text("WO Issue")
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, consumableScreen);
+                  },
+                  child: Column(
+                    children: [
+                      Ink(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(color: colorBlueNavy, borderRadius: BorderRadius.circular(8)),
+                          child: Icon(Icons.content_paste_go_rounded, color: Colors.white)),
+                      SizedBox(height: 10),
+                      Text("Consumable Issue")
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, inventoryScreen);
+                  },
+                  child: Column(
+                    children: [
+                      Ink(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(color: colorGreenDark, borderRadius: BorderRadius.circular(8)),
+                          child: Icon(Icons.inventory, color: Colors.white)),
+                      SizedBox(height: 10),
+                      Text("Inventory Issue")
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          CustomTile(
-            onTap: () {
-              Navigator.pushNamed(context, consumableScreen);
-            },
-            color: colorBlueNavy,
-            leading: const Icon(Icons.menu, color: Colors.white),
-            title: const Text("Consumable ISSUE", style: TextStyle(color: Colors.white)),
-            trailing: const Icon(Icons.arrow_forward, color: Colors.white),
-          ),
-          CustomTile(
-            onTap: () {
-              Navigator.pushNamed(context, inputInventoryScreen);
-            },
-            color: colorGreenDark,
-            leading: const Icon(Icons.menu, color: Colors.white),
-            title: const Text("Inventory ISSUE", style: TextStyle(color: Colors.white)),
-            trailing: const Icon(Icons.arrow_forward, color: Colors.white),
-          ),
-          const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: CustomButton(

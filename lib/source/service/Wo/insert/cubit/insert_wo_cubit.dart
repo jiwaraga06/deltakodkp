@@ -31,11 +31,16 @@ class InsertWoCubit extends Cubit<InsertWoState> {
     print(body);
     emit(InsertWoLoading());
     repository!.insertWo(jsonEncode(body), context).then((value) {
-      var json = jsonDecode(value.body);
       var statusCode = value.statusCode;
-      print("Result insert: $json");
       print(statusCode);
-      emit(InsertWoLoaded(statusCode: statusCode, json: json));
+      if (statusCode == 200) {
+        var json = value.body;
+        print("Result insert: $json");
+        emit(InsertWoLoaded(statusCode: statusCode, json: {"message": "berhasil"}));
+      } else {
+        var json = jsonDecode(value.body);
+        emit(InsertWoLoaded(statusCode: statusCode, json: json));
+      }
     });
   }
 }

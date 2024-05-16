@@ -7,7 +7,8 @@ class CustomField extends StatelessWidget {
   final bool? readOnly, hidePassword;
   final Widget? preffixIcon, suffixIcon;
   final VoidCallback? onTap;
-  const CustomField(
+  TextInputType? keyboardType;
+   CustomField(
       {super.key,
       this.hintText,
       this.labelText,
@@ -17,6 +18,7 @@ class CustomField extends StatelessWidget {
       this.preffixIcon,
       this.suffixIcon,
       this.controller,
+      this.keyboardType,
       this.onTap});
 
   @override
@@ -26,6 +28,7 @@ class CustomField extends StatelessWidget {
       controller: controller,
       readOnly: readOnly!,
       obscureText: hidePassword!,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,

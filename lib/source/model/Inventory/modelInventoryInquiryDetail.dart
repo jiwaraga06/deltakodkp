@@ -15,7 +15,7 @@ class ModelinventoryImquiryDetail {
   final String? requestCode;
   final String? ptDesc;
   final String? lotSerial;
-  final int? qtyIssue;
+  final num? qtyIssue;
   final String? umName;
 
   ModelinventoryImquiryDetail({
@@ -29,13 +29,13 @@ class ModelinventoryImquiryDetail {
   });
 
   factory ModelinventoryImquiryDetail.fromJson(Map<String, dynamic> json) => ModelinventoryImquiryDetail(
-        issueCode: json["issue_code"],
+        issueCode: json["issue_code"] ?? "",
         issueDate: json["issue_date"] == null ? null : DateTime.parse(json["issue_date"]),
-        requestCode: json["request_code"],
-        ptDesc: json["pt_desc"],
-        lotSerial: json["lot_serial"],
-        qtyIssue: json["qty_issue"],
-        umName: json["um_name"],
+        requestCode: json["request_code"] ?? "",
+        ptDesc: json["pt_desc"] ?? "",
+        lotSerial: json["lot_serial"] ?? "",
+        qtyIssue: json["qty_issue"] ?? 0,
+        umName: json["um_name"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {

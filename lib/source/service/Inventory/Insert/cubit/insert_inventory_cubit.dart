@@ -19,21 +19,22 @@ class InsertInventoryCubit extends Cubit<InsertInventoryState> {
       "issue_date": "$date",
       "en_id": "$enId",
       "branch_id": "$branchId",
-      "request_oid": "$reqOid",
-      "request_code": "$reqCode",
+      "request_oid": reqOid ?? "00000000-0000-0000-0000-000000000000",
+      "request_code": reqCode ?? "",
       "add_by": "$username",
       "inventoryIssueDetail": inputInventory
     };
-    emit(InsertInventoryloading());
-    repository!.insertInventory(jsonEncode(body), context).then((value) {
-      var statusCode = value.statusCode;
-      if (statusCode == 200) {
-        var json = value.body;
-        emit(InsertInventoryloaded(statusCode: statusCode, json: json));
-      } else {
-        var json = jsonDecode(value.body);
-        emit(InsertInventoryloaded(statusCode: statusCode, json: json));
-      }
-    });
+    print("Body: $body");
+    // emit(InsertInventoryloading());
+    // repository!.insertInventory(jsonEncode(body), context).then((value) {
+    //   var statusCode = value.statusCode;
+    //   if (statusCode == 200) {
+    //     var json = value.body;
+    //     emit(InsertInventoryloaded(statusCode: statusCode, json: json));
+    //   } else {
+    //     var json = jsonDecode(value.body);
+    //     emit(InsertInventoryloaded(statusCode: statusCode, json: json));
+    //   }
+    // });
   }
 }

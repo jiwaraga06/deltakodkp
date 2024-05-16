@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LocationConsumable extends StatefulWidget {
-  dynamic locId, locDesc;
-  LocationConsumable({super.key, this.locId, this.locDesc});
+  LocationConsumable({super.key});
 
   @override
   State<LocationConsumable> createState() => _LocationConsumableState();
@@ -60,7 +59,6 @@ class _LocationConsumableState extends State<LocationConsumable> {
                 labelStyle: TextStyle(color: Colors.black),
                 hintStyle: TextStyle(color: Colors.black)),
           ),
-          // selectedItem: widget.locname,
           onChanged: (value) {
             setState(() {
               print("disana");

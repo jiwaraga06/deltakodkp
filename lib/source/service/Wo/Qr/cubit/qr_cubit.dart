@@ -29,6 +29,7 @@ class QrCubit extends Cubit<QrState> {
             print("Scan: $json");
             emit(QrLoaded(statusCode: statusCode, model: modelScanFromJson(json)));
           } else {
+            EasyLoading.dismiss();
             var json = jsonDecode(value.body);
             MyDialog.dialogAlert(context, json['message']);
             emit(QrLoaded(statusCode: statusCode, model: modelScanFromJson(jsonEncode([]))));

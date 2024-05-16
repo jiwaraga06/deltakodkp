@@ -12,7 +12,7 @@ String modelinventoryImquiryToJson(List<ModelinventoryImquiry> data) => json.enc
 class ModelinventoryImquiry {
   final String? issueCode;
   final DateTime? issueDate;
-  final dynamic requestCode;
+  final String? requestCode;
 
   ModelinventoryImquiry({
     this.issueCode,
@@ -21,14 +21,14 @@ class ModelinventoryImquiry {
   });
 
   factory ModelinventoryImquiry.fromJson(Map<String, dynamic> json) => ModelinventoryImquiry(
-        issueCode: json["issue_code"],
+        issueCode: json["issue_code"] ?? "",
         issueDate: json["issue_date"] == null ? null : DateTime.parse(json["issue_date"]),
-        requestCode: json["request_code"],
+        requestCode: json["request_code"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
-        "issue_code": issueCode,
+        "issue_code": issueCode ?? "",
         "issue_date": issueDate?.toIso8601String(),
-        "request_code": requestCode,
+        "request_code": requestCode ?? "",
       };
 }

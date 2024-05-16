@@ -45,7 +45,9 @@ class _ConsumableScreenState extends State<ConsumableScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Consumable"), actions: [
+      appBar: AppBar(
+        backgroundColor: colorBlueNavy,
+        title: Text("Consumable", style: TextStyle(color: Colors.white)), actions: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: CustomButton(
@@ -114,15 +116,18 @@ class _ConsumableScreenState extends State<ConsumableScreen> {
                     itemCount: data.length,
                     itemBuilder: (BuildContext context, int index) {
                       var a = data[index];
-                      return GestureDetector(
+                      return InkWell(
+                        splashColor: colorBlueNavy,
                         onTap: () {
-                          Navigator.pushNamed(context, detailConsumableScreen, arguments: {'issue_code': a.issueCode});
+                          Navigator.pushNamed(context, detailConsumableScreen, arguments: {'issue_code': a.issueCode,'req_code': a.requestCode });
                         },
                         child: Container(
                           margin: const EdgeInsets.all(12),
                           padding: const EdgeInsets.only(left: 18, right: 18),
-                          decoration:
-                              BoxDecoration(color: Colors.white, border: Border.all(color: colorBlack, width: 1), borderRadius: BorderRadius.circular(8.0)),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
+                              boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 1.3, spreadRadius: 1.3, offset: Offset(1, 3))]),
                           child: Table(
                             columnWidths: const {
                               0: FixedColumnWidth(100),
@@ -131,21 +136,21 @@ class _ConsumableScreenState extends State<ConsumableScreen> {
                             children: [
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                               TableRow(children: [
-                                const Text("Issue Code", style: TextStyle(fontSize: 19)),
-                                const Text(":", style: TextStyle(fontSize: 19)),
-                                Text(a.issueCode!, style: const TextStyle(fontSize: 19)),
+                                const Text("Issue Code", style: TextStyle(fontSize: 16)),
+                                const Text(":", style: TextStyle(fontSize: 16)),
+                                Text(a.issueCode!, style: const TextStyle(fontSize: 16)),
                               ]),
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                               TableRow(children: [
-                                const Text("Req Code", style: TextStyle(fontSize: 19)),
-                                const Text(":", style: TextStyle(fontSize: 19)),
-                                Text(a.requestCode!, style: const TextStyle(fontSize: 19)),
+                                const Text("Req Code", style: TextStyle(fontSize: 15)),
+                                const Text(":", style: TextStyle(fontSize: 15)),
+                                Text(a.requestCode!, style: const TextStyle(fontSize: 15)),
                               ]),
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                               TableRow(children: [
-                                const Text("Issue Date", style: TextStyle(fontSize: 19)),
-                                const Text(":", style: TextStyle(fontSize: 19)),
-                                Text(a.issueDate.toString(), style: const TextStyle(fontSize: 19)),
+                                const Text("Issue Date", style: TextStyle(fontSize: 15)),
+                                const Text(":", style: TextStyle(fontSize: 15)),
+                                Text(a.issueDate.toString(), style: const TextStyle(fontSize: 15)),
                               ]),
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                             ],

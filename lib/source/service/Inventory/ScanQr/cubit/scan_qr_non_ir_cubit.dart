@@ -15,7 +15,7 @@ class ScanQrNonIrCubit extends Cubit<ScanQrNonIrState> {
   final RepositoryInventory? repository;
   ScanQrNonIrCubit({this.repository}) : super(ScanQrNonIrInitial());
 
-  void scanQrNonIr(lotSerial, locId, context) async {
+  void scanQrNonIr(locId, context) async {
     emit(ScanQrNonIrLoading());
     String? barcodeScanRes;
     try {
@@ -23,16 +23,23 @@ class ScanQrNonIrCubit extends Cubit<ScanQrNonIrState> {
       print('Result Scan:  $barcodeScanRes');
       if (barcodeScanRes != '-1') {
         // 'PTKP/WM/19/08-00001'
-        repository!.getScanQRNonIr(lotSerial, locId, context).then((value) {
+        repository!.getScanQRNonIr(barcodeScanRes, locId, context).then((value) {
           var statusCode = value.statusCode;
           if (statusCode == 200) {
             var json = value.body;
             emit(ScanQrNonIrLoaded(statusCode: statusCode, model: modelinventoryScamQrNonIrFromJson(json)));
           } else {
             var json = jsonDecode(value.body);
+            print("json: $json");
             EasyLoading.dismiss();
-            MyDialog.dialogAlert(context, json['message']);
-            emit(ScanQrNonIrLoaded(statusCode: statusCode, model: modelinventoryScamQrNonIrFromJson(jsonEncode([]))));
+            if (json['message'] != null) {
+              MyDialog.dialogAlert(context, json['message']);
+              emit(ScanQrNonIrLoaded(statusCode: statusCode, model: modelinventoryScamQrNonIrFromJson(jsonEncode({}))));
+            } else {
+              MyDialog.dialogAlert(context, json['errors']);
+              emit(ScanQrNonIrLoaded(statusCode: statusCode, model: modelinventoryScamQrNonIrFromJson(jsonEncode({}))));
+            }
+      
           }
         });
       } else {

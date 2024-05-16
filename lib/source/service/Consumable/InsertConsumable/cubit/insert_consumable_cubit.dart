@@ -29,11 +29,16 @@ class InsertConsumableCubit extends Cubit<InsertConsumableState> {
     print(body);
     emit(InsertConsumableloading());
     repository!.insertConsumable(jsonEncode(body), context).then((value) {
-      var json = jsonDecode(value.body);
       var statusCode = value.statusCode;
-      print("Result insert: $json");
       print(statusCode);
-      emit(InsertConsumableloaded(statusCode: statusCode, json: json));
+      if (statusCode == 200) {
+        var json = value.body;
+        print("Result insert: $json");
+        emit(InsertConsumableloaded(statusCode: statusCode, json: {"message": "Berhasil !"}));
+      } else {
+        var json = jsonDecode(value.body);
+        emit(InsertConsumableloaded(statusCode: statusCode, json: json));
+      }
     });
   }
 }

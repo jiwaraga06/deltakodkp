@@ -15,7 +15,7 @@ class ScanQrConsumableCubit extends Cubit<ScanQrConsumableState> {
   final RepositoryConsumable? repository;
   ScanQrConsumableCubit({this.repository}) : super(ScanQrConsumableInitial());
 
-  void ScanQR(reqCode, locid, context) async {
+  void scanQR(reqCode, locid, context) async {
     emit(ScanQrConsumableLoading());
     String? barcodeScanRes;
     try {

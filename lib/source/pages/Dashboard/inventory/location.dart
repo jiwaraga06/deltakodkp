@@ -1,22 +1,23 @@
 import 'package:deltakodkp/source/env/env.dart';
-import 'package:deltakodkp/source/service/Consumable/Production/cubit/production_cubit.dart';
+import 'package:deltakodkp/source/service/Inventory/Location/cubit/inventory_location_cubit.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProductionUnit extends StatefulWidget {
-  ProductionUnit({super.key});
+class Location extends StatefulWidget {
+  dynamic locId, locName;
+  Location({super.key, this.locId, this.locName});
 
   @override
-  State<ProductionUnit> createState() => _ProductionUnitState();
+  State<Location> createState() => _LocationState();
 }
 
-class _ProductionUnitState extends State<ProductionUnit> {
+class _LocationState extends State<Location> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProductionCubit, ProductionState>(
+    return BlocBuilder<InventoryLocationCubit, InventoryLocationState>(
       builder: (context, state) {
-        if (state is ProductionLoading) {
+        if (state is InventoryLocationloading) {
           return DropdownSearch(
             popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
             items: [].map((e) => e).toList(),
@@ -24,14 +25,14 @@ class _ProductionUnitState extends State<ProductionUnit> {
               dropdownSearchDecoration: InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  hintText: "Production Unit",
-                  labelText: "Production Unit",
+                  hintText: "Location",
+                  labelText: "Location",
                   labelStyle: TextStyle(color: Colors.black),
                   hintStyle: TextStyle(color: Colors.black)),
             ),
           );
         }
-        if (state is ProductionLoaded == false) {
+        if (state is InventoryLocationloaded == false) {
           return DropdownSearch(
             popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
             items: [].map((e) => e).toList(),
@@ -39,32 +40,33 @@ class _ProductionUnitState extends State<ProductionUnit> {
               dropdownSearchDecoration: InputDecoration(
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  hintText: "Production Unit",
-                  labelText: "Production Unit",
+                  hintText: "Location",
+                  labelText: "Location",
                   labelStyle: TextStyle(color: Colors.black),
                   hintStyle: TextStyle(color: Colors.black)),
             ),
           );
         }
-        var data = (state as ProductionLoaded).model!;
+        var data = (state as InventoryLocationloaded).model!;
         return DropdownSearch(
           popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
-          items: data.map((e) => e.prodUnitName).toList(),
+          items: data.map((e) => e.locDesc).toList(),
           dropdownDecoratorProps: const DropDownDecoratorProps(
             dropdownSearchDecoration: InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                hintText: "Production Unit",
-                labelText: "Production Unit",
+                hintText: "Location",
+                labelText: "Location",
                 labelStyle: TextStyle(color: Colors.black),
                 hintStyle: TextStyle(color: Colors.black)),
           ),
-          selectedItem: prodname,
+          selectedItem: locDescInv,
           onChanged: (value) {
             setState(() {
               print("disana");
-              data.where((e) => e.prodUnitName == value).forEach((a) {
-                prodId = a.prodUnitId;
+              data.where((e) => e.locDesc == value).forEach((a) {
+                locidInv = a.locId;
+                locDescInv = a.locDesc;
               });
             });
           },

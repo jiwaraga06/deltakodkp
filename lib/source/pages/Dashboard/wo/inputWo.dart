@@ -51,15 +51,91 @@ class _InputWoScreenState extends State<InputWoScreen> {
   }
 
   void scanQr() {
-    if (controllerWoCode.value.text.isNotEmpty && loclocationCid != null) {
-      BlocProvider.of<QrCubit>(context).qr(controllerWoMrCode.text, loclocationCid, context);
+    if (controllerWoCode.value.text.isNotEmpty && locId != null) {
+      BlocProvider.of<QrCubit>(context).qr(controllerWoMrCode.text, locId, context);
     }
   }
 
-  void addDetail() {
+  TextEditingController controllerDesc = TextEditingController();
+  TextEditingController controllerLot = TextEditingController();
+  TextEditingController controllerQty = TextEditingController(text: "0");
+  void addDetail(desc, lot) {
     setState(() {
-      if (inputwo.where((e) => e.wodOid == wodOid).isEmpty) {
-        inputwo.add(ModelInputWo(wodOid: wodOid, ptId: ptId, ptDesc1: ptDesc1, locId: locId, locDesc: locDesc, lotSerial: lotSerial, qtyIssue: qtyIssue));
+      controllerDesc.text = desc;
+      controllerLot.text = lot;
+      if (inputwo.where((e) => e.lotSerial == lotSerial).isEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Detail"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(children: [
+                      const SizedBox(height: 10),
+                      CustomField(
+                        controller: controllerDesc,
+                        readOnly: true,
+                        hidePassword: false,
+                        labelText: "Item Description",
+                      ),
+                      const SizedBox(height: 10),
+                      CustomField(
+                        controller: controllerLot,
+                        readOnly: true,
+                        hidePassword: false,
+                        labelText: "Lot Serial",
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        autofocus: true,
+                        keyboardType: TextInputType.number,
+                        controller: controllerQty,
+                        decoration: InputDecoration(
+                          labelText: "QTY",
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        ),
+                      ),
+                    ]),
+                  )
+                ],
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("Tutup")),
+                TextButton(
+                    onPressed: () {
+                      if (controllerQty.text.isEmpty || controllerQty.text == "0") {
+                        MyDialog.dialogAlert(context, "Kolom QTY tidak boleh 0 atau kosong");
+                      } else {
+                        setState(() {
+                          inputwo.add(ModelInputWo(
+                              wodOid: wodOid,
+                              ptId: ptId,
+                              ptDesc1: ptDesc1,
+                              locId: locId,
+                              locDesc: locDesc,
+                              lotSerial: lotSerial,
+                              qtyIssue: num.parse(controllerQty.text)));
+                          controllerQty.text = "0";
+                          controllerDesc.clear();
+                          controllerLot.clear();
+                        });
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: const Text("Add Detail")),
+              ],
+            );
+          },
+        );
       } else {
         MyDialog.dialogAlert(context, "Maaf QR ini sudah discan");
       }
@@ -95,6 +171,17 @@ class _InputWoScreenState extends State<InputWoScreen> {
         appBar: AppBar(
           title: const Text("Input WO Issue"),
           actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Switch(
+                value: isScanMRCode,
+                onChanged: (value) {
+                  setState(() {
+                    isScanMRCode = value;
+                  });
+                },
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CustomButton(
@@ -151,7 +238,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
                       locDesc = data.locDesc;
                       lotSerial = data.lotSerial;
                       qtyIssue = data.qtyIssue;
-                      addDetail();
+                      addDetail(data.ptDesc1, data.lotSerial);
                     });
                   }
                 }
@@ -169,7 +256,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
                   var statusCode = state.statusCode;
                   if (statusCode == 200) {
                     clearAllData();
-                    MyDialog.dialogSuccess(context, "Berhasil !");
+                    MyDialog.dialogSuccess(context, data['message']);
                   } else if (statusCode == 401) {
                     MyDialog.dialogInfo(context, "Authorisasi habis, silahkan login kembali", () {
                       Navigator.of(context).pop();
@@ -177,7 +264,11 @@ class _InputWoScreenState extends State<InputWoScreen> {
                       Navigator.of(context).pop();
                     });
                   } else {
-                    MyDialog.dialogAlert(context, data['message']);
+                    if (data['message'] != null) {
+                      MyDialog.dialogAlert(context, data['message']);
+                    } else {
+                      MyDialog.dialogAlert(context, data['errors']);
+                    }
                   }
                 }
               },
@@ -194,26 +285,6 @@ class _InputWoScreenState extends State<InputWoScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Metode Input MR Code"),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            const SizedBox(width: 6),
-                            if (isScanMRCode)
-                              Text("SCAN QR", style: TextStyle(fontWeight: FontWeight.w500))
-                            else
-                              Text("CARI DATA", style: TextStyle(fontWeight: FontWeight.w500)),
-                            const SizedBox(width: 10),
-                            Switch(
-                              value: isScanMRCode,
-                              onChanged: (value) {
-                                setState(() {
-                                  isScanMRCode = value;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
                         const SizedBox(height: 6),
                         CustomField(
                           onTap: isScanMRCode ? scanQRWoCode : showModal,
@@ -307,7 +378,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
                         const SizedBox(height: 20),
                         CustomButton(
                           onTap: scanQr,
-                          text: "SCAN QR",
+                          text: "SCAN By QR",
                           textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
                           bkackgroundColor: colorGreenDarkTeal,
                         ),
@@ -332,58 +403,45 @@ class _InputWoScreenState extends State<InputWoScreen> {
                                 ),
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 8),
-                                  padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black.withOpacity(0.5), width: 1.5),
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
-                                  child: Column(
-                                    children: [
-                                      Table(
-                                        columnWidths: const {
-                                          0: FixedColumnWidth(90),
-                                          1: FixedColumnWidth(10),
-                                        },
-                                        children: [
-                                          const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                          TableRow(children: [
-                                            const Text("PT", style: TextStyle(fontSize: 19)),
-                                            const Text(":", style: TextStyle(fontSize: 19)),
-                                            Text(e.ptDesc1!, style: const TextStyle(fontSize: 19)),
-                                          ]),
-                                          const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                          TableRow(children: [
-                                            const Text("LOT/SERIAL", style: TextStyle(fontSize: 16)),
-                                            const Text(":", style: TextStyle(fontSize: 16)),
-                                            Text(e.lotSerial!, style: const TextStyle(fontSize: 16)),
-                                          ]),
-                                          const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                          TableRow(children: [
-                                            const Text("QTY", style: TextStyle(fontSize: 17)),
-                                            const Text(":", style: TextStyle(fontSize: 17)),
-                                            SizedBox(
-                                              height: 40,
-                                              child: TextFormField(
-                                                initialValue: e.qtyIssue.toString(),
-                                                keyboardType: TextInputType.number,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    if (value.isNotEmpty) {
-                                                      e.qtyIssue = int.parse(value);
-                                                    } else {
-                                                      print('kosong');
-                                                      e.qtyIssue = 0;
-                                                    }
-                                                  });
-                                                },
-                                                decoration: InputDecoration(contentPadding: const EdgeInsets.symmetric(vertical: 10)),
-                                              ),
-                                            )
-                                          ]),
-                                        ],
-                                      ),
-                                    ],
+                                  child: ListTile(
+                                    title: Text(e.ptDesc1!),
+                                    subtitle: Text(e.lotSerial!),
+                                    trailing: Text(e.qtyIssue.toString() + " KG"),
                                   ),
+                                  // child: Column(
+                                  //   children: [
+                                  //     Table(
+                                  //       columnWidths: const {
+                                  //         0: FixedColumnWidth(90),
+                                  //         1: FixedColumnWidth(10),
+                                  //       },
+                                  //       children: [
+                                  //         const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
+                                  //         TableRow(children: [
+                                  //           const Text("DESC", style: TextStyle(fontSize: 17)),
+                                  //           const Text(":", style: TextStyle(fontSize: 17)),
+                                  //           Text(e.ptDesc1!, style: const TextStyle(fontSize: 17)),
+                                  //         ]),
+                                  //         const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
+                                  //         TableRow(children: [
+                                  //           const Text("LOT/SERIAL", style: TextStyle(fontSize: 16)),
+                                  //           const Text(":", style: TextStyle(fontSize: 16)),
+                                  //           Text(e.lotSerial!, style: const TextStyle(fontSize: 16)),
+                                  //         ]),
+                                  //         const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
+                                  //         TableRow(children: [
+                                  //           const Text("QTY", style: TextStyle(fontSize: 16)),
+                                  //           const Text(":", style: TextStyle(fontSize: 16)),
+                                  //           Text(e.qtyIssue.toString() + " KG", style: TextStyle(fontSize: 16)),
+                                  //         ]),
+                                  //       ],
+                                  //     ),
+                                  //   ],
+                                  // ),
                                 ),
                               );
                             }).toList(),

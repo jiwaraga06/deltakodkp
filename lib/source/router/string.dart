@@ -11,3 +11,5 @@ const detailConsumableScreen = '/dashboard/consumable/detailConsumable';
 const inputConsumableScreen = '/dashboard/consumable/input';
 // inventory
 const inputInventoryScreen = '/dashboard/inventory/input';
+const inventoryScreen = '/dashboard/inventory/inventory';
+const inventoryDetailScreen = '/dashboard/inventory/inventoryDetail';

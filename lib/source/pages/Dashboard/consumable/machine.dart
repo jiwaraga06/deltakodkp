@@ -1,11 +1,11 @@
+import 'package:deltakodkp/source/env/env.dart';
 import 'package:deltakodkp/source/service/Consumable/Machine/cubit/machine_cubit.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Machine extends StatefulWidget {
-  dynamic machineId, machineName;
-  Machine({super.key, this.machineId, this.machineName});
+  Machine({super.key});
 
   @override
   State<Machine> createState() => _MachineState();
@@ -59,13 +59,12 @@ class _MachineState extends State<Machine> {
                 labelStyle: TextStyle(color: Colors.black),
                 hintStyle: TextStyle(color: Colors.black)),
           ),
-          selectedItem: widget.machineName,
+          selectedItem: machinename,
           onChanged: (value) {
             setState(() {
               print("disana");
               data.where((e) => e.prodMachineName == value).forEach((a) {
-                widget.machineId = a.prodMachineId;
-                widget.machineName = a.prodMachineName;
+                machineId = a.prodMachineId;
               });
             });
           },

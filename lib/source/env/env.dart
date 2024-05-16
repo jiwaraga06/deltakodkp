@@ -25,5 +25,7 @@ List<ModelInputWo> selectedInputwo = [];
 List<ModelinputConsumable> inputconsumable = [];
 List<ModelinputConsumable> selectedInputconsumable = [];
 var loclocationCid, loclocationCDesc;
+var prodId,prodname, machineId, machinename ;
+var locidInv, locDescInv;
 // Model Input Inventory
 List<Modelinputinventory> inputInventory = [];

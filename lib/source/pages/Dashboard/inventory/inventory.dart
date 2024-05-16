@@ -1,17 +1,17 @@
 part of '../../index.dart';
 
-class WoScreen extends StatefulWidget {
-  const WoScreen({super.key});
+class InventoryScreen extends StatefulWidget {
+  const InventoryScreen({super.key});
 
   @override
-  State<WoScreen> createState() => _WoScreenState();
+  State<InventoryScreen> createState() => _InventoryScreenState();
 }
 
-class _WoScreenState extends State<WoScreen> {
+class _InventoryScreenState extends State<InventoryScreen> {
   TextEditingController controllerStartDate = TextEditingController(text: dateNow.toString());
   TextEditingController controllerEndDate = TextEditingController(text: dateNow.toString());
   void getData() {
-    BlocProvider.of<GetInquiryCubit>(context).getInquiry(controllerStartDate.text, controllerEndDate.text, context);
+    BlocProvider.of<GetInventoryInquiryCubit>(context).getInventoryInquiry(controllerStartDate.text, controllerEndDate.text, context);
   }
 
   void pickStartDate() {
@@ -45,14 +45,14 @@ class _WoScreenState extends State<WoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: colorBlueLight, title: const Text("WO Issue", style: TextStyle(color: Colors.white)), actions: [
+      appBar: AppBar(title: Text("Inventory Issue"), actions: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: CustomButton(
             onTap: () {
-              Navigator.pushNamed(context, inputWoScreen);
+              Navigator.pushNamed(context, inputInventoryScreen);
             },
-            text: "Input WO",
+            text: "Input Inventory",
             textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             bkackgroundColor: Colors.teal,
           ),
@@ -89,27 +89,19 @@ class _WoScreenState extends State<WoScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          BlocBuilder<GetInquiryCubit, GetInquiryState>(
+          BlocBuilder<GetInventoryInquiryCubit, GetInventoryInquiryState>(
             builder: (context, state) {
-              if (state is GetInquiryLoading) {
+              if (state is GetInventoryInquiryLoading) {
                 return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator()));
               }
-              if (state is GetInquiryLoaded == false) {
+              if (state is GetInventoryInquiryLoaded == false) {
                 return Container();
               }
-              var data = (state as GetInquiryLoaded).model;
-              var statusCode = (state as GetInquiryLoaded).statusCode;
+              var data = (state as GetInventoryInquiryLoaded).model;
               if (data!.isEmpty) {
-                return InkWell(
-                  onTap: getData,
-                  child: const SizedBox(
-                      height: 100,
-                      child: Column(
-                        children: [
-                          Text("Data Kosong"),
-                          Text("Tap layar untuk Refresh"),
-                        ],
-                      )),
+                return const SizedBox(
+                  height: 100,
+                  child: Center(child: Text("Data Kosong")),
                 );
               }
               return Expanded(
@@ -125,7 +117,7 @@ class _WoScreenState extends State<WoScreen> {
                       return InkWell(
                         splashColor: colorBlueNavy,
                         onTap: () {
-                          Navigator.pushNamed(context, detailWoScreen, arguments: {'issue_code': a.issueCode, 'wo_code': a.woCode});
+                          Navigator.pushNamed(context, inventoryDetailScreen, arguments: {'issue_code': a.issueCode});
                         },
                         child: Container(
                           margin: const EdgeInsets.all(12),
@@ -148,21 +140,15 @@ class _WoScreenState extends State<WoScreen> {
                               ]),
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                               TableRow(children: [
+                                const Text("Request Code", style: TextStyle(fontSize: 16)),
+                                const Text(":", style: TextStyle(fontSize: 16)),
+                                Text(a.requestCode!, style: const TextStyle(fontSize: 16)),
+                              ]),
+                              const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
+                              TableRow(children: [
                                 const Text("Issue Date", style: TextStyle(fontSize: 15)),
                                 const Text(":", style: TextStyle(fontSize: 15)),
-                                Text(formatDate.format(a.issueDate!), style: const TextStyle(fontSize: 15)),
-                              ]),
-                              const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                              TableRow(children: [
-                                const Text("WO Code", style: TextStyle(fontSize: 15)),
-                                const Text(":", style: TextStyle(fontSize: 15)),
-                                Text(a.woCode!, style: const TextStyle(fontSize: 15)),
-                              ]),
-                              const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                              TableRow(children: [
-                                const Text("Request Code", style: TextStyle(fontSize: 15)),
-                                const Text(":", style: TextStyle(fontSize: 15)),
-                                Text(a.requestCode!, style: const TextStyle(fontSize: 15)),
+                                Text(a.issueDate.toString(), style: const TextStyle(fontSize: 15)),
                               ]),
                               const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
                             ],

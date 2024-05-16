@@ -95,6 +95,17 @@ class RouterNavigation {
           pageBuilder: (context, animation, secondaryAnimation) => const InputInvetoryScreen(),
           transitionsBuilder: rightToLeft,
         );
+      case inventoryScreen:
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const InventoryScreen(),
+          transitionsBuilder: rightToLeft,
+        );
+      case inventoryDetailScreen:
+        return PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const InventoryDetailScreen(),
+          transitionsBuilder: rightToLeft,
+          settings: settings,
+        );
       default:
         return null;
     }
