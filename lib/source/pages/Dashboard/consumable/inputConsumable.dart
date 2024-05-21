@@ -12,7 +12,7 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
   TextEditingController controllerInventory = TextEditingController();
   TextEditingController controllerDate = TextEditingController(text: dateNow);
   TextEditingController controllerCari = TextEditingController();
-  var enId, branchId, reqOId, reqCode,  locid, locname;
+  var enId, branchId, reqOId, reqCode, locid, locname;
   var requestDetOid, ptId, ptDesc, plId, umid, locdesc, lotSerial, qty;
   final formkey = GlobalKey<FormState>();
   bool isScanMRCode = true;
@@ -58,76 +58,104 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
       controllerLot.text = lot;
       controllerDesc.text = desc;
       if (inputconsumable.where((e) => e.lotSerial == lot).isEmpty) {
-        showDialog(
+        showModalBottomSheet(
+          isScrollControlled: true,
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: Text("Detail"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(children: [
-                      const SizedBox(height: 10),
-                      CustomField(
-                        controller: controllerDesc,
-                        readOnly: true,
-                        hidePassword: false,
-                        labelText: "Item Description",
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text("Add To Detail", style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500)),
                       ),
                       const SizedBox(height: 10),
-                      CustomField(
-                        controller: controllerLot,
-                        readOnly: true,
-                        hidePassword: false,
-                        labelText: "Lot Serial",
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(children: [
+                          const SizedBox(height: 10),
+                          CustomField(
+                            controller: controllerDesc,
+                            readOnly: true,
+                            hidePassword: false,
+                            labelText: "Item Description",
+                          ),
+                          const SizedBox(height: 10),
+                          CustomField(
+                            controller: controllerLot,
+                            readOnly: true,
+                            hidePassword: false,
+                            labelText: "Lot Serial",
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            autofocus: true,
+                            keyboardType: TextInputType.number,
+                            controller: controllerQty,
+                            decoration: InputDecoration(
+                              labelText: "QTY",
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            ),
+                          ),
+                        ]),
                       ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        autofocus: true,
-                        keyboardType: TextInputType.number,
-                        controller: controllerQty,
-                        decoration: InputDecoration(
-                          labelText: "QTY",
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    ],
+                  ),
+                ),
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 10),
+                        CustomButton(
+                          onTap: () {
+                            if (controllerQty.text.isEmpty || controllerQty.text == "0") {
+                              MyDialog.dialogAlert(context, "Kolom QTY tidak boleh 0 atau kosong");
+                            } else {
+                              setState(() {
+                                inputconsumable.add(ModelinputConsumable(
+                                    requestDetOid: requestDetOid,
+                                    ptId: ptId,
+                                    ptDesc1: ptDesc,
+                                    plId: plId,
+                                    umId: umid,
+                                    locId: loclocationCid,
+                                    locDesc: loclocationCDesc,
+                                    lotSerial: lotSerial,
+                                    qtyIssue: num.parse(controllerQty.text)) );
+                                controllerQty.clear();
+                                controllerDesc.clear();
+                                controllerLot.clear();
+                              });
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          bkackgroundColor: Colors.blue[700],
+                          text: "Add To Detail",
+                          textStyle: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
                         ),
-                      ),
-                    ]),
-                  )
-                ],
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("Tutup")),
-                TextButton(
-                    onPressed: () {
-                      if (controllerQty.text.isEmpty || controllerQty.text == "0") {
-                        MyDialog.dialogAlert(context, "Kolom QTY tidak boleh 0 atau kosong");
-                      } else {
-                        setState(() {
-                          inputconsumable.add(ModelinputConsumable(
-                              requestDetOid: requestDetOid,
-                              ptId: ptId,
-                              ptDesc1: ptDesc,
-                              plId: plId,
-                              umId: umid,
-                              locId: loclocationCid,
-                              locDesc: loclocationCDesc,
-                              lotSerial: lotSerial,
-                              qtyIssue: num.parse(controllerQty.text)));
-                          controllerQty.text = "0";
-                          controllerDesc.clear();
-                          controllerLot.clear();
-                        });
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: const Text("Add Detail")),
+                        const SizedBox(height: 10),
+                        CustomButton(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          bkackgroundColor: Colors.red[700],
+                          text: "Cancel",
+                          textStyle: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                )
               ],
             );
           },
@@ -152,29 +180,9 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Input Consumable"),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Switch(
-                value: isScanMRCode,
-                onChanged: (value) {
-                  setState(() {
-                    isScanMRCode = value;
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomButton(
-                onTap: submit,
-                text: "SAVE",
-                textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                bkackgroundColor: Colors.green[600],
-              ),
-            )
-          ],
+          backgroundColor: colorYellow,
+          centerTitle: true,
+          title: const Text("Add New Consumable", style: TextStyle(fontWeight: FontWeight.w500)),
         ),
         body: MultiBlocListener(
           listeners: [
@@ -306,86 +314,116 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
               },
             )
           ],
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                Form(
-                  key: formkey,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 6),
-                        CustomField(
-                          onTap: isScanMRCode ? scanQrReqCode : showModal,
-                          readOnly: true,
-                          hidePassword: false,
-                          controller: controllerReqCode,
-                          labelText: "Request Code",
-                          hintText: isScanMRCode ? "Scan QR" : "Cari MR Code",
-                        ),
-                        const SizedBox(height: 20),
-                        ProductionUnit(),
-                        const SizedBox(height: 20),
-                        Machine(),
-                        const SizedBox(height: 20),
-                        CustomField(
-                          readOnly: true,
-                          hidePassword: false,
-                          controller: controllerDate,
-                          labelText: "Tanggal",
-                        ),
-                        const SizedBox(height: 20),
-                        LocationConsumable(),
-                        const SizedBox(height: 20),
-                        CustomButton(
-                          onTap: scanQr,
-                          text: "SCAN By QR",
-                          textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                          bkackgroundColor: colorGreenDarkTeal,
-                        ),
-                        const SizedBox(height: 20),
-                        if (inputconsumable.isNotEmpty)
-                          Column(
-                            children: inputconsumable.map((e) {
-                              return Slidable(
-                                startActionPane: ActionPane(
-                                  motion: const ScrollMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (context) {
-                                        clear(e.lotSerial);
-                                      },
-                                      backgroundColor: Color(0xFFFE4A49),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete,
-                                      label: 'Delete',
-                                    ),
-                                  ],
-                                ),
-                                child: Container(
-                                    margin: const EdgeInsets.only(top: 8),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.black.withOpacity(0.5), width: 1.5),
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: ListTile(
-                                      title: Text(e.ptDesc1!),
-                                      subtitle: Text(e.lotSerial!),
-                                      trailing: Text(e.qtyIssue.toString()),
-                                    )),
-                              );
-                            }).toList(),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18, right: 18.0),
+                      child: Row(
+                        children: [
+                          if (isScanMRCode == true) Text("SCAN BY QR"),
+                          if (isScanMRCode == false) Text("SEARCH MR CODE"),
+                          Switch(
+                            value: isScanMRCode,
+                            onChanged: (value) {
+                              setState(() {
+                                isScanMRCode = value;
+                              });
+                            },
                           ),
-                        const SizedBox(height: 20),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
+                    Form(
+                      key: formkey,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 6),
+                            CustomField(
+                              onTap: isScanMRCode ? scanQrReqCode : showModal,
+                              readOnly: true,
+                              hidePassword: false,
+                              controller: controllerReqCode,
+                              labelText: "Request Code",
+                              hintText: isScanMRCode ? "Scan QR" : "Cari MR Code",
+                            ),
+                            const SizedBox(height: 20),
+                            ProductionUnit(),
+                            const SizedBox(height: 20),
+                            Machine(),
+                            const SizedBox(height: 20),
+                            CustomField(
+                              readOnly: true,
+                              hidePassword: false,
+                              controller: controllerDate,
+                              labelText: "Tanggal",
+                            ),
+                            const SizedBox(height: 20),
+                            LocationConsumable(),
+                            const SizedBox(height: 20),
+                            CustomButton(
+                              onTap: scanQr,
+                              text: "SCAN By QR",
+                              textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                              bkackgroundColor: colorGreenDarkTeal,
+                            ),
+                            const SizedBox(height: 20),
+                            if (inputconsumable.isNotEmpty)
+                              Column(
+                                children: inputconsumable.map((e) {
+                                  return Slidable(
+                                    startActionPane: ActionPane(
+                                      motion: const ScrollMotion(),
+                                      children: [
+                                        SlidableAction(
+                                          onPressed: (context) {
+                                            clear(e.lotSerial);
+                                          },
+                                          backgroundColor: Color(0xFFFE4A49),
+                                          foregroundColor: Colors.white,
+                                          icon: Icons.delete,
+                                          label: 'Delete',
+                                        ),
+                                      ],
+                                    ),
+                                    child: Container(
+                                        margin: const EdgeInsets.only(top: 8),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.black.withOpacity(0.5), width: 1.5),
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        child: ListTile(
+                                          title: Text(e.ptDesc1!),
+                                          subtitle: Text(e.lotSerial!),
+                                          trailing: Text(e.qtyIssue.toString()),
+                                        )),
+                                  );
+                                }).toList(),
+                              ),
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomButton(
+                  onTap: submit,
+                  text: "SAVE",
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  bkackgroundColor: Colors.indigo[600],
+                ),
+              ),
+            ],
           ),
         ),
       ),

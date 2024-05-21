@@ -15,8 +15,9 @@ class _DetailConsumableScreenState extends State<DetailConsumableScreen> {
     BlocProvider.of<GetInquiryDetailConsumableCubit>(context).getInquiryDetail(data['issue_code'], context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorBlueNavy,
-        title: Text("Detail", style: TextStyle(color: Colors.white)),
+          backgroundColor: colorYellow,
+        centerTitle: true,
+        title: Text("Detail", style: TextStyle(fontWeight: FontWeight.w500)),
       ),
       body: Column(
         children: [

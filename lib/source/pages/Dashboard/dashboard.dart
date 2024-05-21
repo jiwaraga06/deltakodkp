@@ -21,13 +21,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: ListView(
         children: [
           Ink(
-            color: Color(0XFFFEB941),
+            color: colorYellow,
             child: SizedBox(
               height: 200,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: Center(
-                  child: Text("DELTAKOD-KP", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
+                  child: Text("PT-KP", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
                 ),
               ),
             ),

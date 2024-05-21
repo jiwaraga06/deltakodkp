@@ -12,6 +12,7 @@ const colorBlueLight = Color(0XFF40A2E3);
 const colorBlueNavy = Color(0XFF0C2D57);
 const colorGreenDark = Color(0XFF50623A);
 const colorGreenDarkTeal = Color(0XFF0A6847);
+const colorYellow = Color(0XFFFEB941);
 
 // date
 var formatDate = DateFormat('yyyy-MM-dd');

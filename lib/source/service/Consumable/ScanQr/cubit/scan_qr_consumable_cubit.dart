@@ -36,8 +36,12 @@ class ScanQrConsumableCubit extends Cubit<ScanQrConsumableState> {
           } else {
             var json = jsonDecode(value.body);
             EasyLoading.dismiss();
-            MyDialog.dialogAlert(context, json['message']);
-            emit(ScanQrConsumableLoaded(statusCode: statusCode, model: modelConsumableScanQrFromJson(jsonEncode([]))));
+            if (json['message'] != null) {
+              MyDialog.dialogAlert(context, json['message']);
+            } else {
+              MyDialog.dialogAlert(context, json['errors']);
+            }
+            emit(ScanQrConsumableLoaded(statusCode: statusCode, model: modelConsumableScanQrFromJson(jsonEncode({}))));
           }
         });
       } else {

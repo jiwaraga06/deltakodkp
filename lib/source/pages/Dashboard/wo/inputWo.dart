@@ -11,6 +11,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
   TextEditingController controllerWoMrCode = TextEditingController();
   TextEditingController controllerWoCode = TextEditingController();
   TextEditingController controllerDate = TextEditingController(text: dateNow);
+  TextEditingController controllerBarcode = TextEditingController();
   TextEditingController controllerCari = TextEditingController();
   var woiOid, woiCode, enId, branchId, ccId, woId, woOid, locId, locDesc;
   // result scan qr
@@ -20,6 +21,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
   void changeStatusScanMRCode() {
     setState(() {
       isScanMRCode = !isScanMRCode;
+      controllerWoMrCode.clear();
     });
   }
 
@@ -47,95 +49,124 @@ class _InputWoScreenState extends State<InputWoScreen> {
   }
 
   void scanQRWoCode() {
-    BlocProvider.of<MaterialRequestCubit>(context).getMaterialReq(context);
+    // BlocProvider.of<MaterialRequestCubit>(context).getMaterialReq(context);
   }
 
   void scanQr() {
     if (controllerWoCode.value.text.isNotEmpty && locId != null) {
-      BlocProvider.of<QrCubit>(context).qr(controllerWoMrCode.text, locId, context);
+      BlocProvider.of<QrCubit>(context).qr(controllerWoMrCode.text,controllerBarcode.text, locId, context);
     }
   }
 
   TextEditingController controllerDesc = TextEditingController();
   TextEditingController controllerLot = TextEditingController();
-  TextEditingController controllerQty = TextEditingController(text: "0");
+  TextEditingController controllerQty = TextEditingController();
   void addDetail(desc, lot) {
     setState(() {
       controllerDesc.text = desc;
       controllerLot.text = lot;
       if (inputwo.where((e) => e.lotSerial == lotSerial).isEmpty) {
-        showDialog(
+        showModalBottomSheet(
+          isScrollControlled: true,
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: Text("Detail"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(children: [
-                      const SizedBox(height: 10),
-                      CustomField(
-                        controller: controllerDesc,
-                        readOnly: true,
-                        hidePassword: false,
-                        labelText: "Item Description",
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text("Add To Detail", style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500)),
                       ),
                       const SizedBox(height: 10),
-                      CustomField(
-                        controller: controllerLot,
-                        readOnly: true,
-                        hidePassword: false,
-                        labelText: "Lot Serial",
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(children: [
+                          const SizedBox(height: 10),
+                          CustomField(
+                            controller: controllerDesc,
+                            readOnly: true,
+                            hidePassword: false,
+                            labelText: "Item Description",
+                          ),
+                          const SizedBox(height: 10),
+                          CustomField(
+                            controller: controllerLot,
+                            readOnly: true,
+                            hidePassword: false,
+                            labelText: "Lot Serial",
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            autofocus: true,
+                            keyboardType: TextInputType.number,
+                            controller: controllerQty,
+                            decoration: InputDecoration(
+                              labelText: "QTY",
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            ),
+                          ),
+                        ]),
                       ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        autofocus: true,
-                        keyboardType: TextInputType.number,
-                        controller: controllerQty,
-                        decoration: InputDecoration(
-                          labelText: "QTY",
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    ],
+                  ),
+                ),
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 10),
+                        CustomButton(
+                          onTap: () {
+                            if (controllerQty.text.isEmpty || controllerQty.text == "0") {
+                              MyDialog.dialogAlert(context, "Kolom QTY tidak boleh 0 atau kosong");
+                            } else {
+                              setState(() {
+                                inputwo.add(ModelInputWo(
+                                    wodOid: wodOid,
+                                    ptId: ptId,
+                                    ptDesc1: ptDesc1,
+                                    locId: locId,
+                                    locDesc: locDesc,
+                                    lotSerial: lotSerial,
+                                    qtyIssue: num.parse(controllerQty.text)));
+                                controllerQty.clear();
+                                controllerDesc.clear();
+                                controllerLot.clear();
+                              });
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          bkackgroundColor: Colors.blue[700],
+                          text: "Add To Detail",
+                          textStyle: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
                         ),
-                      ),
-                    ]),
-                  )
-                ],
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("Tutup")),
-                TextButton(
-                    onPressed: () {
-                      if (controllerQty.text.isEmpty || controllerQty.text == "0") {
-                        MyDialog.dialogAlert(context, "Kolom QTY tidak boleh 0 atau kosong");
-                      } else {
-                        setState(() {
-                          inputwo.add(ModelInputWo(
-                              wodOid: wodOid,
-                              ptId: ptId,
-                              ptDesc1: ptDesc1,
-                              locId: locId,
-                              locDesc: locDesc,
-                              lotSerial: lotSerial,
-                              qtyIssue: num.parse(controllerQty.text)));
-                          controllerQty.text = "0";
-                          controllerDesc.clear();
-                          controllerLot.clear();
-                        });
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: const Text("Add Detail")),
+                        const SizedBox(height: 10),
+                        CustomButton(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          bkackgroundColor: Colors.red[700],
+                          text: "Cancel",
+                          textStyle: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                )
               ],
             );
           },
         );
+     
       } else {
         MyDialog.dialogAlert(context, "Maaf QR ini sudah discan");
       }
@@ -144,7 +175,9 @@ class _InputWoScreenState extends State<InputWoScreen> {
 
   void submit() {
     if (formkey.currentState!.validate()) {
-      BlocProvider.of<InsertWoCubit>(context).insertWo(woiOid, enId, branchId, ccId, woId, woOid, context);
+      MyDialog.dialogInfo(context, "Apakah Anda sudah yakin ?", () {}, () {
+        BlocProvider.of<InsertWoCubit>(context).insertWo(woiOid, enId, branchId, ccId, woId, woOid, context);
+      });
     }
   }
 
@@ -154,10 +187,26 @@ class _InputWoScreenState extends State<InputWoScreen> {
     });
   }
 
+  void listenChange() {
+    setState(() {
+      if (controllerWoMrCode.text.isNotEmpty) {
+        print("ISI: ${controllerWoMrCode.text}");
+        BlocProvider.of<MaterialRequestCubit>(context).getMaterialReq(controllerWoMrCode.text, context);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     // BlocProvider.of<LocationCubit>(context).getLocationList(enId, branchId, context);
+    controllerWoMrCode.addListener(listenChange);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controllerWoMrCode.removeListener(listenChange);
   }
 
   @override
@@ -169,29 +218,9 @@ class _InputWoScreenState extends State<InputWoScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Input WO Issue"),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Switch(
-                value: isScanMRCode,
-                onChanged: (value) {
-                  setState(() {
-                    isScanMRCode = value;
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomButton(
-                onTap: submit,
-                text: "SAVE",
-                textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                bkackgroundColor: Colors.green[600],
-              ),
-            )
-          ],
+          backgroundColor: colorYellow,
+          centerTitle: true,
+          title: const Text("ADD NEW WO ISSUE", style: TextStyle(fontWeight: FontWeight.w500)),
         ),
         body: MultiBlocListener(
           listeners: [
@@ -216,6 +245,10 @@ class _InputWoScreenState extends State<InputWoScreen> {
                       woOid = data.woOid;
                       BlocProvider.of<LocationCubit>(context).getLocationList(enId, branchId, context);
                     });
+                  } else {
+                    setState(() {
+                      controllerWoMrCode.clear();
+                    });
                   }
                 }
               },
@@ -239,6 +272,10 @@ class _InputWoScreenState extends State<InputWoScreen> {
                       lotSerial = data.lotSerial;
                       qtyIssue = data.qtyIssue;
                       addDetail(data.ptDesc1, data.lotSerial);
+                    });
+                  } else {
+                    setState(() {
+                      controllerBarcode.clear();
                     });
                   }
                 }
@@ -274,184 +311,209 @@ class _InputWoScreenState extends State<InputWoScreen> {
               },
             )
           ],
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                Form(
-                  key: formkey,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 6),
-                        CustomField(
-                          onTap: isScanMRCode ? scanQRWoCode : showModal,
-                          readOnly: true,
-                          hidePassword: false,
-                          controller: controllerWoMrCode,
-                          labelText: "MR Code",
-                          hintText: isScanMRCode ? "Scan QR" : "Cari MR Code",
-                        ),
-                        const SizedBox(height: 20),
-                        CustomField(
-                          readOnly: true,
-                          hidePassword: false,
-                          controller: controllerWoCode,
-                          labelText: "Nomor WO",
-                        ),
-                        const SizedBox(height: 20),
-                        CustomField(
-                          readOnly: true,
-                          hidePassword: false,
-                          controller: controllerDate,
-                          labelText: "Tanggal",
-                        ),
-                        const SizedBox(height: 20),
-                        BlocBuilder<LocationCubit, LocationState>(
-                          builder: (context, state) {
-                            if (state is LocationLoading) {
-                              return DropdownMenu(
-                                  expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
-                                  inputDecorationTheme: InputDecorationTheme(
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                    constraints: BoxConstraints.tight(const Size.fromHeight(50)),
-                                    border: const OutlineInputBorder(),
-                                  ),
-                                  hintText: "Pilih Lokasi",
-                                  dropdownMenuEntries: [].map((e) {
-                                    return DropdownMenuEntry(value: e, label: e!);
-                                  }).toList());
-                            }
-                            if (state is LocationLoaded == false) {
-                              return DropdownMenu(
-                                  expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
-                                  inputDecorationTheme: InputDecorationTheme(
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                    constraints: BoxConstraints.tight(const Size.fromHeight(50)),
-                                    border: const OutlineInputBorder(),
-                                  ),
-                                  hintText: "Pilih Lokasi",
-                                  dropdownMenuEntries: [].map((e) {
-                                    return DropdownMenuEntry(value: e, label: e!);
-                                  }).toList());
-                            }
-                            var data = (state as LocationLoaded).model;
-                            var statusCode = (state as LocationLoaded).statusCode;
-                            if (statusCode != 200) {
-                              return DropdownMenu(
-                                  expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
-                                  inputDecorationTheme: InputDecorationTheme(
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                    constraints: BoxConstraints.tight(const Size.fromHeight(50)),
-                                    border: const OutlineInputBorder(),
-                                  ),
-                                  hintText: "Pilih Lokasi",
-                                  dropdownMenuEntries: [].map((e) {
-                                    return DropdownMenuEntry(value: e, label: e!);
-                                  }).toList());
-                            }
-                            return Container(
-                              child: DropdownMenu(
-                                expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
-                                inputDecorationTheme: InputDecorationTheme(
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                  constraints: BoxConstraints.tight(const Size.fromHeight(50)),
-                                  border: const OutlineInputBorder(),
-                                ),
-                                hintText: "Pilih Lokasi",
-                                dropdownMenuEntries: data!.map((e) {
-                                  return DropdownMenuEntry(value: e, label: e.locDesc!);
-                                }).toList(),
-                                onSelected: (value) {
-                                  setState(() {
-                                    print(value);
-                                    locId = value!.locId;
-                                    locDesc = value!.locDesc;
-                                  });
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomButton(
-                          onTap: scanQr,
-                          text: "SCAN By QR",
-                          textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                          bkackgroundColor: colorGreenDarkTeal,
-                        ),
-                        const SizedBox(height: 20),
-                        if (inputwo.isNotEmpty)
-                          Column(
-                            children: inputwo.map((e) {
-                              return Slidable(
-                                startActionPane: ActionPane(
-                                  motion: const ScrollMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      onPressed: (context) {
-                                        clear(e.wodOid);
-                                      },
-                                      backgroundColor: Color(0xFFFE4A49),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete,
-                                      label: 'Delete',
-                                    ),
-                                  ],
-                                ),
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 8),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black.withOpacity(0.5), width: 1.5),
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: ListTile(
-                                    title: Text(e.ptDesc1!),
-                                    subtitle: Text(e.lotSerial!),
-                                    trailing: Text(e.qtyIssue.toString() + " KG"),
-                                  ),
-                                  // child: Column(
-                                  //   children: [
-                                  //     Table(
-                                  //       columnWidths: const {
-                                  //         0: FixedColumnWidth(90),
-                                  //         1: FixedColumnWidth(10),
-                                  //       },
-                                  //       children: [
-                                  //         const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                  //         TableRow(children: [
-                                  //           const Text("DESC", style: TextStyle(fontSize: 17)),
-                                  //           const Text(":", style: TextStyle(fontSize: 17)),
-                                  //           Text(e.ptDesc1!, style: const TextStyle(fontSize: 17)),
-                                  //         ]),
-                                  //         const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                  //         TableRow(children: [
-                                  //           const Text("LOT/SERIAL", style: TextStyle(fontSize: 16)),
-                                  //           const Text(":", style: TextStyle(fontSize: 16)),
-                                  //           Text(e.lotSerial!, style: const TextStyle(fontSize: 16)),
-                                  //         ]),
-                                  //         const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                  //         TableRow(children: [
-                                  //           const Text("QTY", style: TextStyle(fontSize: 16)),
-                                  //           const Text(":", style: TextStyle(fontSize: 16)),
-                                  //           Text(e.qtyIssue.toString() + " KG", style: TextStyle(fontSize: 16)),
-                                  //         ]),
-                                  //       ],
-                                  //     ),
-                                  //   ],
-                                  // ),
-                                ),
-                              );
-                            }).toList(),
-                          )
-                      ],
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18, right: 18.0),
+                      child: Row(
+                        children: [
+                          if (isScanMRCode == true) Text("SCAN BY QR"),
+                          if (isScanMRCode == false) Text("SEARCH MR CODE"),
+                          Switch(
+                            value: isScanMRCode,
+                            onChanged: (value) {
+                              setState(() {
+                                isScanMRCode = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
+                    Form(
+                      key: formkey,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: [
+                            const SizedBox(height: 6),
+                            if (isScanMRCode == true)
+                              TextFormField(
+                                autofocus: true,
+                                controller: controllerWoMrCode,
+                                decoration: InputDecoration(
+                                  labelText: "MR CODE",
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                ),
+                              ),
+                            if (isScanMRCode == false)
+                              CustomField(
+                                onTap: showModal,
+                                readOnly: true,
+                                hidePassword: false,
+                                controller: controllerWoMrCode,
+                                labelText: "MR Code",
+                                hintText: isScanMRCode ? "Scan QR" : "Cari MR Code",
+                              ),
+                            const SizedBox(height: 8),
+                            CustomField(
+                              readOnly: true,
+                              hidePassword: false,
+                              controller: controllerWoCode,
+                              labelText: "Nomor WO",
+                            ),
+                            const SizedBox(height: 8),
+                            CustomField(
+                              readOnly: true,
+                              hidePassword: false,
+                              controller: controllerDate,
+                              labelText: "Tanggal",
+                            ),
+                            const SizedBox(height: 8),
+                            BlocBuilder<LocationCubit, LocationState>(
+                              builder: (context, state) {
+                                if (state is LocationLoading) {
+                                  return DropdownMenu(
+                                      expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
+                                      inputDecorationTheme: InputDecorationTheme(
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                                        constraints: BoxConstraints.tight(const Size.fromHeight(50)),
+                                        border: const OutlineInputBorder(),
+                                      ),
+                                      hintText: "Pilih Lokasi",
+                                      dropdownMenuEntries: [].map((e) {
+                                        return DropdownMenuEntry(value: e, label: e!);
+                                      }).toList());
+                                }
+                                if (state is LocationLoaded == false) {
+                                  return DropdownMenu(
+                                      expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
+                                      inputDecorationTheme: InputDecorationTheme(
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                                        constraints: BoxConstraints.tight(const Size.fromHeight(50)),
+                                        border: const OutlineInputBorder(),
+                                      ),
+                                      hintText: "Pilih Lokasi",
+                                      dropdownMenuEntries: [].map((e) {
+                                        return DropdownMenuEntry(value: e, label: e!);
+                                      }).toList());
+                                }
+                                var data = (state as LocationLoaded).model;
+                                var statusCode = (state as LocationLoaded).statusCode;
+                                if (statusCode != 200) {
+                                  return DropdownMenu(
+                                      expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
+                                      inputDecorationTheme: InputDecorationTheme(
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                                        constraints: BoxConstraints.tight(const Size.fromHeight(50)),
+                                        border: const OutlineInputBorder(),
+                                      ),
+                                      hintText: "Pilih Lokasi",
+                                      dropdownMenuEntries: [].map((e) {
+                                        return DropdownMenuEntry(value: e, label: e!);
+                                      }).toList());
+                                }
+                                return Container(
+                                  child: DropdownMenu(
+                                    expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
+                                    inputDecorationTheme: InputDecorationTheme(
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                                      constraints: BoxConstraints.tight(const Size.fromHeight(50)),
+                                      border: const OutlineInputBorder(),
+                                    ),
+                                    hintText: "Pilih Lokasi",
+                                    dropdownMenuEntries: data!.map((e) {
+                                      return DropdownMenuEntry(value: e, label: e.locDesc!);
+                                    }).toList(),
+                                    onSelected: (value) {
+                                      setState(() {
+                                        print(value);
+                                        locId = value!.locId;
+                                        locDesc = value!.locDesc;
+                                      });
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: controllerBarcode,
+                              decoration: InputDecoration(
+                                labelText: "BARCODE",
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  if(controllerBarcode.text.isNotEmpty){
+                                    scanQr();
+                                  }
+                                });
+                              },
+                            ),
+                            // CustomButton(
+                            //   onTap: scanQr,
+                            //   text: "SCAN  QR",
+                            //   textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                            //   bkackgroundColor: colorGreenDarkTeal,
+                            // ),
+                            const SizedBox(height: 20),
+                            if (inputwo.isNotEmpty)
+                              Column(
+                                children: inputwo.map((e) {
+                                  return Slidable(
+                                    startActionPane: ActionPane(
+                                      motion: const ScrollMotion(),
+                                      children: [
+                                        SlidableAction(
+                                          onPressed: (context) {
+                                            clear(e.wodOid);
+                                          },
+                                          backgroundColor: Color(0xFFFE4A49),
+                                          foregroundColor: Colors.white,
+                                          icon: Icons.delete,
+                                          label: 'Delete',
+                                        ),
+                                      ],
+                                    ),
+                                    child: Container(
+                                      margin: const EdgeInsets.only(top: 8),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black.withOpacity(0.5), width: 1.5),
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                      child: ListTile(
+                                        title: Text(e.ptDesc1!),
+                                        subtitle: Text(e.lotSerial!),
+                                        trailing: Text(e.qtyIssue.toString() + " KG"),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomButton(
+                  onTap: submit,
+                  text: "SAVE",
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  bkackgroundColor: Colors.indigo[600],
+                ),
+              ),
+            ],
           ),
         ),
       ),

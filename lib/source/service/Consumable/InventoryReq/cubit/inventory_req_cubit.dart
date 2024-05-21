@@ -33,8 +33,12 @@ class InventoryReqCubit extends Cubit<InventoryReqConsumableState> {
           } else {
             var json = jsonDecode(value.body);
             EasyLoading.dismiss();
-            MyDialog.dialogAlert(context, json['message']);
-            emit(InventoryReqConsumableloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(jsonEncode([]))));
+            if (json['message'] != null) {
+              MyDialog.dialogAlert(context, json['message']);
+            } else {
+              MyDialog.dialogAlert(context, json['errors']);
+            }
+            emit(InventoryReqConsumableloaded(statusCode: statusCode, model: modelConsumableInventoryReqFromJson(jsonEncode({}))));
           }
         });
       } else {

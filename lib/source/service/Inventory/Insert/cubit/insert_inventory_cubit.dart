@@ -25,16 +25,16 @@ class InsertInventoryCubit extends Cubit<InsertInventoryState> {
       "inventoryIssueDetail": inputInventory
     };
     print("Body: $body");
-    // emit(InsertInventoryloading());
-    // repository!.insertInventory(jsonEncode(body), context).then((value) {
-    //   var statusCode = value.statusCode;
-    //   if (statusCode == 200) {
-    //     var json = value.body;
-    //     emit(InsertInventoryloaded(statusCode: statusCode, json: json));
-    //   } else {
-    //     var json = jsonDecode(value.body);
-    //     emit(InsertInventoryloaded(statusCode: statusCode, json: json));
-    //   }
-    // });
+    emit(InsertInventoryloading());
+    repository!.insertInventory(jsonEncode(body), context).then((value) {
+      var statusCode = value.statusCode;
+      if (statusCode == 200) {
+        var json = value.body;
+        emit(InsertInventoryloaded(statusCode: statusCode, json: json));
+      } else {
+        var json = jsonDecode(value.body);
+        emit(InsertInventoryloaded(statusCode: statusCode, json: json));
+      }
+    });
   }
 }

@@ -22,11 +22,13 @@ class _InputInvetoryScreenState extends State<InputInvetoryScreen> {
   }
 
   void scanQr() {
-    BlocProvider.of<ScanQrCubit>(context).scanQr(controllerReqCode.text, locidInv, context);
-  }
-
-  void scanQrNonIr() {
-    BlocProvider.of<ScanQrNonIrCubit>(context).scanQrNonIr(locidInv, context);
+    if (controllerReqCode.text.isNotEmpty) {
+      print("ada");
+      BlocProvider.of<ScanQrCubit>(context).scanQr(controllerReqCode.text, locidInv, context);
+    } else {
+      print("kosong");
+      BlocProvider.of<ScanQrNonIrCubit>(context).scanQrNonIr(locidInv, context);
+    }
   }
 
   void clear(value) {
@@ -53,59 +55,112 @@ class _InputInvetoryScreenState extends State<InputInvetoryScreen> {
     setState(() {
       controllerDesc.text = desc;
       controllerLot.text = lot;
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("Detail"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(children: [
-                    const SizedBox(height: 10),
-                    CustomField(controller: controllerDesc, readOnly: true, hidePassword: false, labelText: "Item Description"),
-                    const SizedBox(height: 10),
-                    CustomField(controller: controllerLot, readOnly: true, hidePassword: false, labelText: "Lot Serial"),
-                    const SizedBox(height: 10),
-                    CustomField(keyboardType: TextInputType.number, controller: controllerQty, readOnly: false, hidePassword: false, labelText: "QTY"),
-                  ]),
+      if (inputInventory.where((e) => e.lotSerial == lotSerial).isEmpty) {
+        showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          builder: (context) {
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 50),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text("Add To Detail", style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500)),
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(children: [
+                          const SizedBox(height: 10),
+                          CustomField(
+                            controller: controllerDesc,
+                            readOnly: true,
+                            hidePassword: false,
+                            labelText: "Item Description",
+                          ),
+                          const SizedBox(height: 10),
+                          CustomField(
+                            controller: controllerLot,
+                            readOnly: true,
+                            hidePassword: false,
+                            labelText: "Lot Serial",
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            autofocus: true,
+                            keyboardType: TextInputType.number,
+                            controller: controllerQty,
+                            decoration: InputDecoration(
+                              labelText: "QTY",
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 10.0, right: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 10),
+                        CustomButton(
+                          onTap: () {
+                            if (controllerQty.text.isEmpty || controllerQty.text == "0") {
+                              MyDialog.dialogAlert(context, "Kolom QTY tidak boleh 0 atau kosong");
+                            } else {
+                              setState(() {
+                                inputInventory.add(Modelinputinventory(
+                                    requestDetOid: requestDetOid,
+                                    ptId: ptId,
+                                    ptDesc1: ptDesc,
+                                    plId: plId,
+                                    umId: umId,
+                                    locId: loclocationCid,
+                                    locDesc: loclocationCDesc,
+                                    lotSerial: lotSerial,
+                                    qtyIssue: num.parse(controllerQty.text)));
+                                controllerQty.clear();
+                                controllerDesc.clear();
+                                controllerLot.clear();
+                              });
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          bkackgroundColor: Colors.blue[700],
+                          text: "Add To Detail",
+                          textStyle: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 10),
+                        CustomButton(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          bkackgroundColor: Colors.red[700],
+                          text: "Cancel",
+                          textStyle: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
                 )
               ],
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Tutup")),
-              TextButton(
-                  onPressed: () {
-                    setState(() {
-                      print(locid);
-                      print(locdesc);
-                      inputInventory.add(Modelinputinventory(
-                          locDesc: locdesc,
-                          locId: locid,
-                          lotSerial: lotSerial,
-                          plId: plId,
-                          ptDesc1: ptDesc,
-                          ptId: ptId,
-                          qtyIssue: num.parse(controllerQty.text),
-                          requestDetOid: requestDetOid,
-                          umId: umId));
-                      controllerQty.clear();
-                      controllerDesc.clear();
-                      controllerLot.clear();
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Add Detail")),
-            ],
-          );
-        },
-      );
+            );
+          },
+        );
+      } else {
+        MyDialog.dialogAlert(context, "Maaf QR ini sudah discan");
+      }
     });
   }
 
@@ -123,18 +178,9 @@ class _InputInvetoryScreenState extends State<InputInvetoryScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Input Inventory"),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomButton(
-                onTap: submit,
-                text: "SAVE",
-                textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                bkackgroundColor: Colors.green[600],
-              ),
-            )
-          ],
+          backgroundColor: colorYellow,
+          centerTitle: true,
+          title: const Text("ADD NEW INVENTORY", style: TextStyle(fontWeight: FontWeight.w500)),
         ),
         body: MultiBlocListener(
           listeners: [
@@ -183,160 +229,151 @@ class _InputInvetoryScreenState extends State<InputInvetoryScreen> {
                   }
                 }
               },
+            ),
+            BlocListener<InsertInventoryCubit, InsertInventoryState>(
+              listener: (context, state) {
+                if (state is InsertInventoryloading) {
+                  EasyLoading.show();
+                }
+                if (state is InsertInventoryloaded) {
+                  EasyLoading.dismiss();
+                  var data = state.json;
+                  var statusCode = state.statusCode;
+                  if (statusCode == 200) {
+                    clearAllData();
+                    MyDialog.dialogSuccess(context, data['message']);
+                  } else if (statusCode == 401) {
+                    MyDialog.dialogInfo(context, "Authorisasi habis, silahkan login kembali", () {
+                      Navigator.of(context).pop();
+                    }, () {
+                      Navigator.of(context).pop();
+                    });
+                  } else {
+                    if (data['message'] != null) {
+                      MyDialog.dialogAlert(context, data['message']);
+                    } else {
+                      MyDialog.dialogAlert(context, data['errors']);
+                    }
+                  }
+                }
+              },
             )
           ],
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                Form(
-                  key: formkey,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Metode Input Request Code"),
-                        const SizedBox(height: 6),
-                        Row(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 10),
+                    Form(
+                      key: formkey,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(width: 6),
-                            if (isScaninventoryCode)
-                              Text("SCAN QR", style: TextStyle(fontWeight: FontWeight.w500))
-                            else
-                              Text("CARI DATA", style: TextStyle(fontWeight: FontWeight.w500)),
-                            const SizedBox(width: 10),
-                            Switch(
-                              value: isScaninventoryCode,
-                              onChanged: (value) {
-                                setState(() {
-                                  isScaninventoryCode = value;
-                                });
-                              },
+                            Row(
+                              children: [
+                                const SizedBox(width: 6),
+                                if (isScaninventoryCode)
+                                  Text("SCAN QR", style: TextStyle(fontWeight: FontWeight.w500))
+                                else
+                                  Text("CARI DATA", style: TextStyle(fontWeight: FontWeight.w500)),
+                                const SizedBox(width: 10),
+                                Switch(
+                                  value: isScaninventoryCode,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isScaninventoryCode = value;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            CustomField(
+                              onTap: isScaninventoryCode ? scanQrReqCode : showModal,
+                              readOnly: true,
+                              hidePassword: false,
+                              controller: controllerReqCode,
+                              labelText: "Request Code",
+                              hintText: isScaninventoryCode ? "Scan QR" : "Cari MR Code",
+                              suffixIcon: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      controllerReqCode.clear();
+                                      reqCode = "";
+                                    });
+                                  },
+                                  child: Icon(Icons.clear)),
+                            ),
+                            const SizedBox(height: 10),
+                            Location(locId: locid, locName: locdesc),
+                            const SizedBox(height: 10),
+                            CustomField(
+                              readOnly: true,
+                              hidePassword: false,
+                              controller: controllerDate,
+                              labelText: "Tanggal",
+                            ),
+                            const SizedBox(height: 20),
+                            CustomButton(
+                              onTap: scanQr,
+                              text: "SCAN QR Request Code",
+                              textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+                              bkackgroundColor: colorBlueNavy,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
-                        CustomField(
-                          onTap: isScaninventoryCode ? scanQrReqCode : showModal,
-                          readOnly: true,
-                          hidePassword: false,
-                          controller: controllerReqCode,
-                          labelText: "Request Code",
-                          hintText: isScaninventoryCode ? "Scan QR" : "Cari MR Code",
-                        ),
-                        const SizedBox(height: 10),
-                        Location(locId: locid, locName: locdesc),
-                        const SizedBox(height: 10),
-                        CustomField(
-                          readOnly: true,
-                          hidePassword: false,
-                          controller: controllerDate,
-                          labelText: "Tanggal",
-                        ),
-                        const SizedBox(height: 20),
-                        Text("Metode Scan QR"),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            const SizedBox(width: 6),
-                            if (isScanQrNonIr)
-                              Text("SCAN QR Non Request Code", style: TextStyle(fontWeight: FontWeight.w500))
-                            else
-                              Text("SCAN QR Request Code", style: TextStyle(fontWeight: FontWeight.w500)),
-                            const SizedBox(width: 10),
-                            Switch(
-                              value: isScanQrNonIr,
-                              onChanged: (value) {
-                                setState(() {
-                                  isScanQrNonIr = value;
-                                  locDescInv = "";
-                                  locid = 0;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                        if (isScanQrNonIr == true)
-                          CustomButton(
-                            onTap: scanQrNonIr,
-                            text: "SCAN QR Non Request Code",
-                            textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                            bkackgroundColor: colorGreenDarkTeal,
-                          ),
-                        if (isScanQrNonIr == false)
-                          CustomButton(
-                            onTap: scanQr,
-                            text: "SCAN QR Request Code",
-                            textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                            bkackgroundColor: colorBlueNavy,
-                          ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                if (inputInventory.isNotEmpty)
-                  Column(
-                    children: inputInventory.map((e) {
-                      return Slidable(
-                        startActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          children: [
-                            SlidableAction(
-                              onPressed: (context) {
-                                clear(e.lotSerial);
-                              },
-                              backgroundColor: Color(0xFFFE4A49),
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: 'Delete',
+                    if (inputInventory.isNotEmpty)
+                      Column(
+                        children: inputInventory.map((e) {
+                          return Slidable(
+                            startActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    clear(e.lotSerial);
+                                  },
+                                  backgroundColor: Color(0xFFFE4A49),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: 'Delete',
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 8),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black.withOpacity(0.5), width: 1.5),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Column(
-                            children: [
-                              Table(
-                                columnWidths: const {
-                                  0: FixedColumnWidth(90),
-                                  1: FixedColumnWidth(10),
-                                },
-                                children: [
-                                  const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                  TableRow(children: [
-                                    const Text("PT", style: TextStyle(fontSize: 19)),
-                                    const Text(":", style: TextStyle(fontSize: 19)),
-                                    Text(e.ptDesc1!, style: const TextStyle(fontSize: 19)),
-                                  ]),
-                                  const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                  TableRow(children: [
-                                    const Text("LOT/SERIAL", style: TextStyle(fontSize: 16)),
-                                    const Text(":", style: TextStyle(fontSize: 16)),
-                                    Text(e.lotSerial!, style: const TextStyle(fontSize: 16)),
-                                  ]),
-                                  const TableRow(children: [SizedBox(height: 4), SizedBox(height: 4), SizedBox(height: 4)]),
-                                  TableRow(children: [
-                                    const Text("QTY", style: TextStyle(fontSize: 17)),
-                                    const Text(":", style: TextStyle(fontSize: 17)),
-                                    Text(e.qtyIssue.toString(), style: TextStyle(fontSize: 17)),
-                                  ]),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                const SizedBox(height: 20),
-              ],
-            ),
+                            child: Container(
+                                margin: const EdgeInsets.only(top: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black.withOpacity(0.5), width: 1.5),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: ListTile(
+                                  title: Text(e.ptDesc1!),
+                                  subtitle: Text(e.lotSerial!),
+                                  trailing: Text(e.qtyIssue.toString()),
+                                )),
+                          );
+                        }).toList(),
+                      ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomButton(
+                  onTap: submit,
+                  text: "SAVE",
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                  bkackgroundColor: Colors.indigo[600],
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -33,8 +33,14 @@ class InventoryRequestCubit extends Cubit<InventoryReqState> {
           } else {
             var json = jsonDecode(value.body);
             EasyLoading.dismiss();
+            if (json['message'] != null) {
+
             MyDialog.dialogAlert(context, json['message']);
-            emit(InventoryReqLoaded(statusCode: statusCode, model: modelinventoryRequestFromJson(jsonEncode([]))));
+            } else {
+            MyDialog.dialogAlert(context, json['errors']);
+
+            }
+            emit(InventoryReqLoaded(statusCode: statusCode, model: modelinventoryRequestFromJson(jsonEncode({}))));
           }
         });
       } else {
@@ -52,7 +58,7 @@ class InventoryRequestCubit extends Cubit<InventoryReqState> {
       print("Inventory Req: $json");
       if (statusCode == 401) {
       } else if (statusCode == 200) {
-      var json = value.body;
+        var json = value.body;
         emit(InventoryReqLoaded(statusCode: statusCode, model: modelinventoryRequestFromJson(json)));
       } else {
         var json = jsonDecode(value.body);

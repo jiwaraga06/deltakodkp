@@ -15,15 +15,15 @@ class MaterialRequestCubit extends Cubit<MaterialRequestState> {
   final RepositoryWo? repository;
   MaterialRequestCubit({this.repository}) : super(MaterialRequestInitial());
 
-  void getMaterialReq(context) async {
+  void getMaterialReq(value,context) async {
     emit(MaterialRequestLoading());
-    String? barcodeScanRes;
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
-      print('Result Scan:  $barcodeScanRes');
-      if (barcodeScanRes != '-1') {
+    // String? barcodeScanRes;
+    // try {
+    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+    //   print('Result Scan:  $barcodeScanRes');
+    //   if (barcodeScanRes != '-1') {
         // 'PTKP/WM/19/08-00001'
-        repository!.getMaterialRequest(barcodeScanRes, context).then((value) {
+        repository!.getMaterialRequest(value, context).then((value) {
           var statusCode = value.statusCode;
           print("Material Req: $json");
           if (statusCode == 401) {
@@ -33,15 +33,15 @@ class MaterialRequestCubit extends Cubit<MaterialRequestState> {
           } else {
             var json = jsonDecode(value.body);
             MyDialog.dialogAlert(context, json['message']);
-            emit(MaterialRequestLoaded(statusCode: statusCode, model: modelMaterialReqFromJson(jsonEncode([]))));
+            emit(MaterialRequestLoaded(statusCode: statusCode, model: modelMaterialReqFromJson(jsonEncode({}))));
           }
         });
-      } else {
-        EasyLoading.dismiss();
-      }
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
+    //   } else {
+    //     EasyLoading.dismiss();
+    //   }
+    // } on PlatformException {
+    //   barcodeScanRes = 'Failed to get platform version.';
+    // }
   }
 
   void getMaterialReqValue(value, context) async {
