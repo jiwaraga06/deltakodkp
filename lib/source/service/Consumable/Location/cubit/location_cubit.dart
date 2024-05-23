@@ -14,6 +14,10 @@ class LocationConsumableCubit extends Cubit<LocationConsumableState> {
   final RepositoryConsumable? repository;
   LocationConsumableCubit({this.repository}) : super(LocationConsumableInitial());
 
+  void initial() {
+    emit(LocationConsumableInitial());
+  }
+
   void getLocation(id, branch, context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var username = pref.getString("username");

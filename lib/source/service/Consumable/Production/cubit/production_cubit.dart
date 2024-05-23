@@ -14,6 +14,10 @@ class ProductionCubit extends Cubit<ProductionState> {
   final RepositoryConsumable? repository;
   ProductionCubit({this.repository}) : super(ProductionInitial());
 
+  void initial() {
+    emit(ProductionInitial());
+  }
+
   void production(id, context) {
     emit(ProductionLoading());
     repository!.getProductionUnitList(id, context).then((value) {

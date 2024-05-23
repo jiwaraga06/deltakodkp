@@ -9,6 +9,7 @@ import 'package:deltakodkp/source/pages/Dashboard/consumable/productionUnit.dart
 import 'package:deltakodkp/source/pages/Dashboard/inventory/location.dart';
 import 'package:deltakodkp/source/router/string.dart';
 import 'package:deltakodkp/source/service/Auth/cubit/auth_cubit.dart';
+import 'package:deltakodkp/source/service/Auth/cubit/profile_cubit.dart';
 import 'package:deltakodkp/source/service/Consumable/GetInquiry/cubit/get_inquiry_cubit.dart';
 import 'package:deltakodkp/source/service/Consumable/GetInquiryDetail/cubit/get_inquiry_detail_cubit.dart';
 import 'package:deltakodkp/source/service/Consumable/InsertConsumable/cubit/insert_consumable_cubit.dart';

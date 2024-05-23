@@ -13,6 +13,10 @@ class MachineCubit extends Cubit<MachineState> {
   final RepositoryConsumable? repository;
   MachineCubit({this.repository}) : super(MachineInitial());
 
+  void initial() {
+    emit(MachineInitial());
+  }
+
   void machine(id, context) {
     emit(MachineLoading());
     repository!.getMachineList(id, context).then((value) {

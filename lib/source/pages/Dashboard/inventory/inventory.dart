@@ -113,7 +113,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                           return InkWell(
                             splashColor: colorBlueNavy,
                             onTap: () {
-                              Navigator.pushNamed(context, inventoryDetailScreen, arguments: {'issue_code': a.issueCode});
+                              Navigator.pushNamed(context, inventoryDetailScreen, arguments: {'issue_code': a.issueCode, 'req_code': a.requestCode});
                             },
                             child: Container(
                               margin: const EdgeInsets.all(12),

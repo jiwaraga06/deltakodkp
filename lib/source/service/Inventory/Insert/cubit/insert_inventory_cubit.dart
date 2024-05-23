@@ -30,7 +30,7 @@ class InsertInventoryCubit extends Cubit<InsertInventoryState> {
       var statusCode = value.statusCode;
       if (statusCode == 200) {
         var json = value.body;
-        emit(InsertInventoryloaded(statusCode: statusCode, json: json));
+        emit(InsertInventoryloaded(statusCode: statusCode, json: {"message": "berhasil"}));
       } else {
         var json = jsonDecode(value.body);
         emit(InsertInventoryloaded(statusCode: statusCode, json: json));

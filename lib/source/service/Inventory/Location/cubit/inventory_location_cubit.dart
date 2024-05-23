@@ -12,6 +12,10 @@ class InventoryLocationCubit extends Cubit<InventoryLocationState> {
   final RepositoryInventory? repository;
   InventoryLocationCubit({this.repository}) : super(InventoryLocationInitial());
 
+  void initial() {
+    emit(InventoryLocationInitial());
+  }
+
   void getLocation(enid, branchId, context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var username = pref.getString("username");

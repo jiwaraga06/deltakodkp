@@ -15,15 +15,15 @@ class ScanQrNonIrCubit extends Cubit<ScanQrNonIrState> {
   final RepositoryInventory? repository;
   ScanQrNonIrCubit({this.repository}) : super(ScanQrNonIrInitial());
 
-  void scanQrNonIr(locId, context) async {
+  void scanQrNonIr(value, locId, context) async {
     emit(ScanQrNonIrLoading());
-    String? barcodeScanRes;
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
-      print('Result Scan:  $barcodeScanRes');
-      if (barcodeScanRes != '-1') {
+    // String? barcodeScanRes;
+    // try {
+    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+    //   print('Result Scan:  $barcodeScanRes');
+    //   if (barcodeScanRes != '-1') {
         // 'PTKP/WM/19/08-00001'
-        repository!.getScanQRNonIr(barcodeScanRes, locId, context).then((value) {
+        repository!.getScanQRNonIr(value, locId, context).then((value) {
           var statusCode = value.statusCode;
           if (statusCode == 200) {
             var json = value.body;
@@ -34,7 +34,6 @@ class ScanQrNonIrCubit extends Cubit<ScanQrNonIrState> {
             EasyLoading.dismiss();
             if (json['message'] != null) {
               MyDialog.dialogAlert(context, json['message']);
-              emit(ScanQrNonIrLoaded(statusCode: statusCode, model: modelinventoryScamQrNonIrFromJson(jsonEncode({}))));
             } else {
               MyDialog.dialogAlert(context, json['errors']);
               emit(ScanQrNonIrLoaded(statusCode: statusCode, model: modelinventoryScamQrNonIrFromJson(jsonEncode({}))));
@@ -42,11 +41,11 @@ class ScanQrNonIrCubit extends Cubit<ScanQrNonIrState> {
       
           }
         });
-      } else {
-        EasyLoading.dismiss();
-      }
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
+    //   } else {
+    //     EasyLoading.dismiss();
+    //   }
+    // } on PlatformException {
+    //   barcodeScanRes = 'Failed to get platform version.';
+    // }
   }
 }

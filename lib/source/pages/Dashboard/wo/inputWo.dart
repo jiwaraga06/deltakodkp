@@ -27,6 +27,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
 
   void clearAllData() {
     setState(() {
+      controllerBarcode.clear();
       inputwo.clear();
       controllerWoMrCode.clear();
       controllerWoCode.clear();
@@ -53,8 +54,8 @@ class _InputWoScreenState extends State<InputWoScreen> {
   }
 
   void scanQr() {
-    if (controllerWoCode.value.text.isNotEmpty && locId != null) {
-      BlocProvider.of<QrCubit>(context).qr(controllerWoMrCode.text,controllerBarcode.text, locId, context);
+    if (controllerWoCode.value.text.isNotEmpty && (locId != null)) {
+      BlocProvider.of<QrCubit>(context).qr(controllerWoMrCode.text, controllerBarcode.text, locId, context);
     }
   }
 
@@ -166,7 +167,6 @@ class _InputWoScreenState extends State<InputWoScreen> {
             );
           },
         );
-     
       } else {
         MyDialog.dialogAlert(context, "Maaf QR ini sudah discan");
       }
@@ -189,7 +189,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
 
   void listenChange() {
     setState(() {
-      if (controllerWoMrCode.text.isNotEmpty) {
+      if ((controllerWoMrCode.text != woiCode) && controllerWoMrCode.text.isNotEmpty) {
         print("ISI: ${controllerWoMrCode.text}");
         BlocProvider.of<MaterialRequestCubit>(context).getMaterialReq(controllerWoMrCode.text, context);
       }
@@ -200,13 +200,13 @@ class _InputWoScreenState extends State<InputWoScreen> {
   void initState() {
     super.initState();
     // BlocProvider.of<LocationCubit>(context).getLocationList(enId, branchId, context);
-    controllerWoMrCode.addListener(listenChange);
+    // controllerWoMrCode.addListener(listenChange);
   }
 
   @override
   void dispose() {
     super.dispose();
-    controllerWoMrCode.removeListener(listenChange);
+    // controllerWoMrCode.removeListener(listenChange);
   }
 
   @override
@@ -236,6 +236,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
                   if (statusCode == 200) {
                     setState(() {
                       controllerWoMrCode.text = data!.woiCode!;
+                      woiCode = data!.woiCode!;
                       controllerWoCode.text = data!.woCode!;
                       woiOid = data.woiOid;
                       enId = data.enId;
@@ -349,7 +350,21 @@ class _InputWoScreenState extends State<InputWoScreen> {
                                   labelText: "MR CODE",
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
                                   contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                  suffixIcon: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          controllerWoMrCode.clear();
+                                        });
+                                      },
+                                      child: Icon(Icons.clear)),
                                 ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (controllerWoMrCode.text.isNotEmpty) {
+                                      listenChange();
+                                    }
+                                  });
+                                },
                               ),
                             if (isScanMRCode == false)
                               CustomField(
@@ -378,67 +393,75 @@ class _InputWoScreenState extends State<InputWoScreen> {
                             BlocBuilder<LocationCubit, LocationState>(
                               builder: (context, state) {
                                 if (state is LocationLoading) {
-                                  return DropdownMenu(
-                                      expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
-                                      inputDecorationTheme: InputDecorationTheme(
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                        constraints: BoxConstraints.tight(const Size.fromHeight(50)),
-                                        border: const OutlineInputBorder(),
-                                      ),
-                                      hintText: "Pilih Lokasi",
-                                      dropdownMenuEntries: [].map((e) {
-                                        return DropdownMenuEntry(value: e, label: e!);
-                                      }).toList());
+                                  return DropdownSearch(
+                                    popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+                                    items: [].map((e) => e).toList(),
+                                    dropdownDecoratorProps: const DropDownDecoratorProps(
+                                      dropdownSearchDecoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                          hintText: "Location",
+                                          labelText: "Location",
+                                          labelStyle: TextStyle(color: Colors.black),
+                                          hintStyle: TextStyle(color: Colors.black)),
+                                    ),
+                                  );
                                 }
                                 if (state is LocationLoaded == false) {
-                                  return DropdownMenu(
-                                      expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
-                                      inputDecorationTheme: InputDecorationTheme(
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                        constraints: BoxConstraints.tight(const Size.fromHeight(50)),
-                                        border: const OutlineInputBorder(),
-                                      ),
-                                      hintText: "Pilih Lokasi",
-                                      dropdownMenuEntries: [].map((e) {
-                                        return DropdownMenuEntry(value: e, label: e!);
-                                      }).toList());
+                                  return DropdownSearch(
+                                    popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+                                    items: [].map((e) => e).toList(),
+                                    dropdownDecoratorProps: const DropDownDecoratorProps(
+                                      dropdownSearchDecoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                          hintText: "Location",
+                                          labelText: "Location",
+                                          labelStyle: TextStyle(color: Colors.black),
+                                          hintStyle: TextStyle(color: Colors.black)),
+                                    ),
+                                  );
                                 }
-                                var data = (state as LocationLoaded).model;
+                                var data = (state as LocationLoaded).model!;
                                 var statusCode = (state as LocationLoaded).statusCode;
                                 if (statusCode != 200) {
-                                  return DropdownMenu(
-                                      expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
-                                      inputDecorationTheme: InputDecorationTheme(
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                        constraints: BoxConstraints.tight(const Size.fromHeight(50)),
-                                        border: const OutlineInputBorder(),
-                                      ),
-                                      hintText: "Pilih Lokasi",
-                                      dropdownMenuEntries: [].map((e) {
-                                        return DropdownMenuEntry(value: e, label: e!);
-                                      }).toList());
+                                  return DropdownSearch(
+                                    popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+                                    items: [].map((e) => e).toList(),
+                                    dropdownDecoratorProps: const DropDownDecoratorProps(
+                                      dropdownSearchDecoration: InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                          hintText: "Location",
+                                          labelText: "Location",
+                                          labelStyle: TextStyle(color: Colors.black),
+                                          hintStyle: TextStyle(color: Colors.black)),
+                                    ),
+                                  );
                                 }
                                 return Container(
-                                  child: DropdownMenu(
-                                    expandedInsets: const EdgeInsets.symmetric(horizontal: 1),
-                                    inputDecorationTheme: InputDecorationTheme(
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                                      constraints: BoxConstraints.tight(const Size.fromHeight(50)),
-                                      border: const OutlineInputBorder(),
-                                    ),
-                                    hintText: "Pilih Lokasi",
-                                    dropdownMenuEntries: data!.map((e) {
-                                      return DropdownMenuEntry(value: e, label: e.locDesc!);
-                                    }).toList(),
-                                    onSelected: (value) {
-                                      setState(() {
-                                        print(value);
-                                        locId = value!.locId;
-                                        locDesc = value!.locDesc;
-                                      });
-                                    },
+                                    child: DropdownSearch(
+                                  popupProps: const PopupProps.menu(showSearchBox: true, fit: FlexFit.loose),
+                                  items: data.map((e) => e.locDesc).toList(),
+                                  dropdownDecoratorProps: const DropDownDecoratorProps(
+                                    dropdownSearchDecoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                        hintText: "Location",
+                                        labelText: "Location",
+                                        labelStyle: TextStyle(color: Colors.black),
+                                        hintStyle: TextStyle(color: Colors.black)),
                                   ),
-                                );
+                                  onChanged: (value) {
+                                    setState(() {
+                                      print("disana");
+                                      data.where((e) => e.locDesc == value).forEach((a) {
+                                        locId = a.locId;
+                                        locDesc = a.locDesc;
+                                      });
+                                    });
+                                  },
+                                ));
                               },
                             ),
                             const SizedBox(height: 8),
@@ -446,12 +469,19 @@ class _InputWoScreenState extends State<InputWoScreen> {
                               controller: controllerBarcode,
                               decoration: InputDecoration(
                                 labelText: "BARCODE",
+                                suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        controllerBarcode.clear();
+                                      });
+                                    },
+                                    child: Icon(Icons.clear)),
                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
                                 contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                               ),
                               onChanged: (value) {
                                 setState(() {
-                                  if(controllerBarcode.text.isNotEmpty){
+                                  if (controllerBarcode.text.isNotEmpty) {
                                     scanQr();
                                   }
                                 });

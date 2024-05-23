@@ -12,19 +12,22 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
   TextEditingController controllerInventory = TextEditingController();
   TextEditingController controllerDate = TextEditingController(text: dateNow);
   TextEditingController controllerCari = TextEditingController();
+  TextEditingController controllerBarcode = TextEditingController();
   var enId, branchId, reqOId, reqCode, locid, locname;
   var requestDetOid, ptId, ptDesc, plId, umid, locdesc, lotSerial, qty;
   final formkey = GlobalKey<FormState>();
   bool isScanMRCode = true;
 
   void scanQrReqCode() {
-    BlocProvider.of<InventoryReqCubit>(context).inventoryReq(context);
+    // BlocProvider.of<InventoryReqCubit>(context).inventoryReq(context);
   }
 
   void scanQr() {
     print(loclocationCid);
     print(loclocationCDesc);
-    BlocProvider.of<ScanQrConsumableCubit>(context).scanQR(controllerReqCode.text, loclocationCid, context);
+    if (controllerReqCode.text.isNotEmpty && (loclocationCid != null)) {
+      BlocProvider.of<ScanQrConsumableCubit>(context).scanQR(controllerReqCode.text, controllerBarcode.text, loclocationCid, context);
+    }
   }
 
   void clear(value) {
@@ -35,7 +38,11 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
 
   void clearAllData() {
     setState(() {
+      BlocProvider.of<ProductionCubit>(context).initial();
+      BlocProvider.of<MachineCubit>(context).initial();
+      BlocProvider.of<LocationConsumableCubit>(context).initial();
       inputconsumable.clear();
+      controllerBarcode.clear();
       controllerReqCode.clear();
       controllerInventory.clear();
       requestDetOid = null;
@@ -52,7 +59,7 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
 
   TextEditingController controllerDesc = TextEditingController();
   TextEditingController controllerLot = TextEditingController();
-  TextEditingController controllerQty = TextEditingController(text: "0");
+  TextEditingController controllerQty = TextEditingController();
   void addDetail(desc, lot) {
     setState(() {
       controllerLot.text = lot;
@@ -130,7 +137,7 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                                     locId: loclocationCid,
                                     locDesc: loclocationCDesc,
                                     lotSerial: lotSerial,
-                                    qtyIssue: num.parse(controllerQty.text)) );
+                                    qtyIssue: num.parse(controllerQty.text)));
                                 controllerQty.clear();
                                 controllerDesc.clear();
                                 controllerLot.clear();
@@ -168,8 +175,32 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
 
   void submit() {
     if (formkey.currentState!.validate()) {
-      BlocProvider.of<InsertConsumableCubit>(context).insertConsumbale(controllerDate.text, enId, branchId, reqOId, reqCode, prodId, machineId, context);
+      MyDialog.dialogInfo(context, "Apakah Anda sudah yakin ?", () {}, () {
+        BlocProvider.of<InsertConsumableCubit>(context).insertConsumbale(controllerDate.text, enId, branchId, reqOId, reqCode, prodId, machineId, context);
+      });
     }
+  }
+
+  void listenChange() {
+    setState(() {
+      if ((controllerReqCode.text != reqCode) && controllerReqCode.text.isNotEmpty) {
+        print("ISI: ${controllerReqCode.text}");
+        BlocProvider.of<InventoryReqCubit>(context).inventoryReq(controllerReqCode.text, context);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // BlocProvider.of<LocationCubit>(context).getLocationList(enId, branchId, context);
+    controllerReqCode.addListener(listenChange);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controllerReqCode.removeListener(listenChange);
   }
 
   @override
@@ -207,6 +238,10 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                       BlocProvider.of<ProductionCubit>(context).production(data.enId, context);
                       BlocProvider.of<MachineCubit>(context).machine(data.enId, context);
                       BlocProvider.of<LocationConsumableCubit>(context).getLocation(data.enId, data.branchId, context);
+                    });
+                  } else {
+                    setState(() {
+                      controllerReqCode.clear();
                     });
                   }
                 }
@@ -281,6 +316,10 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                       qty = data.qtyIssue;
                       addDetail(data.ptDesc1, data.lotSerial);
                     });
+                  } else {
+                    setState(() {
+                      controllerBarcode.clear();
+                    });
                   }
                 }
               },
@@ -345,33 +384,74 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 6),
-                            CustomField(
-                              onTap: isScanMRCode ? scanQrReqCode : showModal,
-                              readOnly: true,
-                              hidePassword: false,
-                              controller: controllerReqCode,
-                              labelText: "Request Code",
-                              hintText: isScanMRCode ? "Scan QR" : "Cari MR Code",
-                            ),
-                            const SizedBox(height: 20),
+                            if (isScanMRCode == true)
+                              TextFormField(
+                                autofocus: true,
+                                controller: controllerReqCode,
+                                decoration: InputDecoration(
+                                  labelText: "REQUEST CODE",
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                  suffixIcon: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          controllerReqCode.clear();
+                                        });
+                                      },
+                                      child: Icon(Icons.clear)),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (controllerReqCode.text.isNotEmpty) {
+                                      listenChange();
+                                    }
+                                  });
+                                },
+                              ),
+                            if (isScanMRCode == false)
+                              CustomField(
+                                onTap: showModal,
+                                readOnly: true,
+                                hidePassword: false,
+                                controller: controllerReqCode,
+                                labelText: "REQUEST Code",
+                                hintText: "Cari REQ Code",
+                              ),
+                            const SizedBox(height: 10),
                             ProductionUnit(),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             Machine(),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             CustomField(
                               readOnly: true,
                               hidePassword: false,
                               controller: controllerDate,
                               labelText: "Tanggal",
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
                             LocationConsumable(),
-                            const SizedBox(height: 20),
-                            CustomButton(
-                              onTap: scanQr,
-                              text: "SCAN By QR",
-                              textStyle: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
-                              bkackgroundColor: colorGreenDarkTeal,
+                            const SizedBox(height: 8),
+                            TextFormField(
+                              controller: controllerBarcode,
+                              decoration: InputDecoration(
+                                labelText: "BARCODE",
+                                suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        controllerBarcode.clear();
+                                      });
+                                    },
+                                    child: Icon(Icons.clear)),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: colorBlack)),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  if (controllerBarcode.text.isNotEmpty) {
+                                    scanQr();
+                                  }
+                                });
+                              },
                             ),
                             const SizedBox(height: 20),
                             if (inputconsumable.isNotEmpty)

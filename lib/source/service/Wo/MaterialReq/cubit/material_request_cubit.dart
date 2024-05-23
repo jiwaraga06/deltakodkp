@@ -50,13 +50,15 @@ class MaterialRequestCubit extends Cubit<MaterialRequestState> {
       var json = value.body;
       var statusCode = value.statusCode;
       print("Material Req: $json");
-      if (statusCode == 401) {
-      } else if (statusCode == 200) {
-        emit(MaterialRequestLoaded(statusCode: statusCode, model: modelMaterialReqFromJson(json)));
-      } else {
-        MyDialog.dialogAlert(context, "Maaf terjadi kesalahan");
-        emit(MaterialRequestLoaded(statusCode: statusCode, model: modelMaterialReqFromJson(jsonEncode([]))));
-      }
+        if (statusCode == 401) {
+          } else if (statusCode == 200) {
+            var json = value.body;
+            emit(MaterialRequestLoaded(statusCode: statusCode, model: modelMaterialReqFromJson(json)));
+          } else {
+            var json = jsonDecode(value.body);
+            MyDialog.dialogAlert(context, json['message']);
+            emit(MaterialRequestLoaded(statusCode: statusCode, model: modelMaterialReqFromJson(jsonEncode({}))));
+          }
     });
   }
 }

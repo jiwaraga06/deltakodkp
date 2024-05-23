@@ -13,9 +13,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<ProfileCubit>(context).getprofile();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 20,
         backgroundColor: Color(0XFFFEB941),
       ),
       body: ListView(
@@ -24,11 +31,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: colorYellow,
             child: SizedBox(
               height: 200,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Center(
-                  child: Text("PT-KP", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
-                ),
+              child: Stack(
+                children: [
+                  BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      if (state is ProfileLoading) {
+                        return Container();
+                      }
+                      if (state is ProfileLoaded == false) {
+                        return Container();
+                      }
+                      var data = (state as ProfileLoaded).json;
+                      return Container(
+                        margin: const EdgeInsets.only(left: 18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Hallo ,", style: TextStyle(fontSize: 18)),
+                            Text(data['username'].toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0, top: 12),
+                    child: Center(
+                      child: Text("PT-KP", style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

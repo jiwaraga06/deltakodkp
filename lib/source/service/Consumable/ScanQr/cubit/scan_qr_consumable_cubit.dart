@@ -15,17 +15,17 @@ class ScanQrConsumableCubit extends Cubit<ScanQrConsumableState> {
   final RepositoryConsumable? repository;
   ScanQrConsumableCubit({this.repository}) : super(ScanQrConsumableInitial());
 
-  void scanQR(reqCode, locid, context) async {
+  void scanQR(reqCode,value, locid, context) async {
     emit(ScanQrConsumableLoading());
-    String? barcodeScanRes;
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
-      print('Result Scan:  $barcodeScanRes');
-      if (barcodeScanRes != '-1') {
+    // String? barcodeScanRes;
+    // try {
+    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR);
+    //   print('Result Scan:  $barcodeScanRes');
+    //   if (barcodeScanRes != '-1') {
         // 'PTKP/WM/19/08-00001'
         print(reqCode);
         print(locid);
-        repository!.getScanQR(reqCode, barcodeScanRes, locid, context).then((value) {
+        repository!.getScanQR(reqCode, value, locid, context).then((value) {
           var statusCode = value.statusCode;
           print("Scan QR: $json");
           print("Scan QR: $statusCode");
@@ -44,11 +44,11 @@ class ScanQrConsumableCubit extends Cubit<ScanQrConsumableState> {
             emit(ScanQrConsumableLoaded(statusCode: statusCode, model: modelConsumableScanQrFromJson(jsonEncode({}))));
           }
         });
-      } else {
-        EasyLoading.dismiss();
-      }
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
+    //   } else {
+    //     EasyLoading.dismiss();
+    //   }
+    // } on PlatformException {
+    //   barcodeScanRes = 'Failed to get platform version.';
+    // }
   }
 }
