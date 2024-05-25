@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthCubit, AuthState>(
-        listener: (context, state) async{
+        listener: (context, state) async {
           if (state is Authloading) {
             EasyLoading.show();
           }
@@ -57,13 +57,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       const SizedBox(height: 10),
-                      Text("LOGIN to CONTINUE", style: TextStyle(fontSize: 20)),
-                      const SizedBox(height: 50),
+                      Container(
+                        alignment: Alignment.center,
+                        child: Image.asset("assets/logo_peruri.png", height: 200),
+                      ),
+                       Text("Welcome !", style: TextStyle(fontSize: 30, color: colorBlueNavy, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 30),
                       CustomField(
                         readOnly: false,
                         hidePassword: false,
                         controller: controllerUsername,
-                        hintText: "Insert Username",
+                        hintText: "Masukan Username",
+                        labelText: "Username",
+                        messageError: "Please insert this column",
                       ),
                       const SizedBox(height: 20),
                       CustomField(
@@ -74,7 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: hidePassword ? Icon(Icons.visibility) : Icon(Icons.visibility_off),
                         ),
                         controller: controllerPassword,
-                        hintText: "Insert Password",
+                        hintText: "Masukan Password",
+                        labelText: "Password",
+                        messageError: "Please insert this column",
                       ),
                     ],
                   ),
@@ -85,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: CustomButton(
                   onTap: login,
-                  bkackgroundColor: Colors.blue,
+                  bkackgroundColor: colorBlueNavy,
                   text: "LOGIN",
                   textStyle: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
                 ),

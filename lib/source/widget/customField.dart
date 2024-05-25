@@ -36,7 +36,11 @@ class CustomField extends StatelessWidget {
         prefixIcon: preffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: colorBlack),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.8), width: 2),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: BorderSide(color: colorBlueNavy,strokeAlign: 20),
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       ),

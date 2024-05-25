@@ -17,8 +17,20 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: const Center(
-      child: CircularProgressIndicator(),
+        body: Container(
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset("assets/logo_peruri.png", height: 150),
+          const SizedBox(height: 8),
+          LoadingAnimationWidget.staggeredDotsWave(
+            color: colorBlueNavy,
+            size: 50,
+          ),
+        ],
+      ),
     ));
   }
 }
