@@ -12,7 +12,7 @@ class InsertConsumableCubit extends Cubit<InsertConsumableState> {
   final RepositoryConsumable? repository;
   InsertConsumableCubit({this.repository}) : super(InsertConsumableInitial());
 
-  void insertConsumbale(date, enid, branchId, reqOid, reqCode, prodId, machineId,ket, context) async {
+  void insertConsumbale(date, enid, branchId, reqOid, reqCode, prodId, machineId, ket, context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var username = pref.getString("username");
     var body = {
@@ -24,7 +24,7 @@ class InsertConsumableCubit extends Cubit<InsertConsumableState> {
       "prod_unit_id": "$prodId",
       "prod_machine_id": "$machineId",
       "add_by": "$username",
-      "issue_remarks": ket,
+      "issue_remarks": "$ket",
       "consumableIssueDetail": inputconsumable
     };
     print(body);

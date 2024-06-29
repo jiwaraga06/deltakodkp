@@ -443,6 +443,7 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                               hidePassword: false,
                               controller: controllerKeterangan,
                               labelText: "Keterangan",
+                              messageError: "Kolom keterangan masih kosong",
                             ),
                             const SizedBox(height: 10),
                             LocationConsumable(),
