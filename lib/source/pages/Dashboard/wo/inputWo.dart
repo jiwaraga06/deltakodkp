@@ -173,6 +173,14 @@ class _InputWoScreenState extends State<InputWoScreen> {
     });
   }
 
+  void selectDate() {
+    pickDate(context).then((date) {
+      setState(() {
+        controllerDate = TextEditingController(text: date.toString().split(" ")[0]);
+      });
+    });
+  }
+
   void submit() {
     if (formkey.currentState!.validate()) {
       MyDialog.dialogInfo(context, "Apakah Anda sudah yakin ?", () {}, () {
@@ -384,6 +392,7 @@ class _InputWoScreenState extends State<InputWoScreen> {
                             ),
                             const SizedBox(height: 8),
                             CustomField(
+                              onTap: selectDate,
                               readOnly: true,
                               hidePassword: false,
                               controller: controllerDate,

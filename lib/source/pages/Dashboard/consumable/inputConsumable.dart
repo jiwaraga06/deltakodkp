@@ -13,6 +13,7 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
   TextEditingController controllerDate = TextEditingController(text: dateNow);
   TextEditingController controllerCari = TextEditingController();
   TextEditingController controllerBarcode = TextEditingController();
+  TextEditingController controllerKeterangan = TextEditingController();
   var enId, branchId, reqOId, reqCode, locid, locname;
   var requestDetOid, ptId, ptDesc, plId, umid, locdesc, lotSerial, qty;
   final formkey = GlobalKey<FormState>();
@@ -176,11 +177,18 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
   void submit() {
     if (formkey.currentState!.validate()) {
       MyDialog.dialogInfo(context, "Apakah Anda sudah yakin ?", () {}, () {
-        BlocProvider.of<InsertConsumableCubit>(context).insertConsumbale(controllerDate.text, enId, branchId, reqOId, reqCode, prodId, machineId, context);
+        BlocProvider.of<InsertConsumableCubit>(context)
+            .insertConsumbale(controllerDate.text, enId, branchId, reqOId, reqCode, prodId, machineId, controllerKeterangan.text, context);
       });
     }
   }
-
+ void selectDate() {
+    pickDate(context).then((date) {
+      setState(() {
+        controllerDate = TextEditingController(text: date.toString().split(" ")[0]);
+      });
+    });
+  }
   void listenChange() {
     setState(() {
       if ((controllerReqCode.text != reqCode) && controllerReqCode.text.isNotEmpty) {
@@ -423,6 +431,7 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                             Machine(),
                             const SizedBox(height: 10),
                             CustomField(
+                              onTap: selectDate,
                               readOnly: true,
                               hidePassword: false,
                               controller: controllerDate,
