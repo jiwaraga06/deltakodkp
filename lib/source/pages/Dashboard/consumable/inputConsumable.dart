@@ -438,6 +438,13 @@ class _InputConsumableScreenState extends State<InputConsumableScreen> {
                               labelText: "Tanggal",
                             ),
                             const SizedBox(height: 10),
+                            CustomField(
+                              readOnly: false,
+                              hidePassword: false,
+                              controller: controllerKeterangan,
+                              labelText: "Keterangan",
+                            ),
+                            const SizedBox(height: 10),
                             LocationConsumable(),
                             const SizedBox(height: 8),
                             TextFormField(
